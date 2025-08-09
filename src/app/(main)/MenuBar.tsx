@@ -2,7 +2,17 @@ import { validateRequest } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import streamServerClient from "@/lib/stream";
-import { Bookmark, Home } from "lucide-react";
+import { 
+  Home, 
+  TrendingUp, 
+  Users, 
+  Award, 
+  Briefcase, 
+  BookOpen, 
+  MessageCircle, 
+  Settings,
+  Bookmark 
+} from "lucide-react";
 import Link from "next/link";
 import MessagesButton from "./MessagesButton";
 import NotificationsButton from "./NotificationsButton";
@@ -30,7 +40,7 @@ export default async function MenuBar({ className }: MenuBarProps) {
     <div className={className}>
       <Button
         variant="ghost"
-        className="flex items-center justify-start gap-3"
+        className="flex items-center justify-start gap-3 hover:bg-orange-50 hover:text-orange-600"
         title="Home"
         asChild
       >
@@ -39,13 +49,79 @@ export default async function MenuBar({ className }: MenuBarProps) {
           <span className="hidden lg:inline">Home</span>
         </Link>
       </Button>
+      <Button
+        variant="ghost"
+        className="flex items-center justify-start gap-3 hover:bg-orange-50 hover:text-orange-600"
+        title="Dashboard"
+        asChild
+      >
+        <Link href="/dashboard">
+          <TrendingUp />
+          <span className="hidden lg:inline">Dashboard</span>
+        </Link>
+      </Button>
+      <Button
+        variant="ghost"
+        className="flex items-center justify-start gap-3 hover:bg-orange-50 hover:text-orange-600"
+        title="Connect"
+        asChild
+      >
+        <Link href="/connect">
+          <Users />
+          <span className="hidden lg:inline">Connect</span>
+        </Link>
+      </Button>
+      <Button
+        variant="ghost"
+        className="flex items-center justify-start gap-3 hover:bg-orange-50 hover:text-orange-600"
+        title="Scholarships"
+        asChild
+      >
+        <Link href="/scholarships">
+          <Award />
+          <span className="hidden lg:inline">Scholarships</span>
+        </Link>
+      </Button>
+      <Button
+        variant="ghost"
+        className="flex items-center justify-start gap-3 hover:bg-orange-50 hover:text-orange-600"
+        title="Internships"
+        asChild
+      >
+        <Link href="/internships">
+          <Briefcase />
+          <span className="hidden lg:inline">Internships</span>
+        </Link>
+      </Button>
+      <Button
+        variant="ghost"
+        className="flex items-center justify-start gap-3 hover:bg-orange-50 hover:text-orange-600"
+        title="Classroom"
+        asChild
+      >
+        <Link href="/classroom">
+          <BookOpen />
+          <span className="hidden lg:inline">Classroom</span>
+        </Link>
+      </Button>
       <NotificationsButton
         initialState={{ unreadCount: unreadNotificationsCount }}
       />
       <MessagesButton initialState={{ unreadCount: unreadMessagesCount }} />
       <Button
         variant="ghost"
-        className="flex items-center justify-start gap-3"
+        className="flex items-center justify-start gap-3 hover:bg-orange-50 hover:text-orange-600"
+        title="Settings"
+        asChild
+      >
+        <Link href="/settings">
+          <Settings />
+          <span className="hidden lg:inline">Settings</span>
+        </Link>
+      </Button>
+      <Button
+        variant="ghost"
+        className="flex items-center justify-start gap-3 hover:bg-orange-50 hover:text-orange-600"
         title="Bookmarks"
         asChild
       >

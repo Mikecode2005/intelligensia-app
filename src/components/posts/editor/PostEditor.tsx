@@ -43,7 +43,7 @@ export default function PostEditor() {
         italic: false,
       }),
       Placeholder.configure({
-        placeholder: "What's crack-a-lackin'?",
+        placeholder: "Share your academic journey, ask questions, or connect with fellow students...",
       }),
     ],
   });
