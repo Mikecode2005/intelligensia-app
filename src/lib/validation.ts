@@ -16,5 +16,19 @@ export const loginSchema = z.object({
   password: requiredString,
 });
 
+export const createPostSchema = z.object({
+  content: requiredString,
+  mediaIds: z.array(z.string()).max(5, "Cannot have more than 5 attachments"),
+});
+
+export const updateUserProfileSchema = z.object({
+  displayName: requiredString,
+  bio: z.string().max(1000, "Bio must be at most 1000 characters"),
+});
+
+export const createCommentSchema = z.object({
+  content: requiredString,
+});
 export type SignUpValues = z.infer<typeof signUpSchema>;
 export type LoginValues = z.infer<typeof loginSchema>;
+export type UpdateUserProfileValues = z.infer<typeof updateUserProfileSchema>;

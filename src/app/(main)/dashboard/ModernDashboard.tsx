@@ -13,10 +13,14 @@ import {
   Star,
   MessageSquare,
   UserPlus,
-  GraduationCap,
-  Briefcase,
+  Heart,
+  Share2,
+  Eye,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  Zap,
+  Globe,
+  Bookmark
 } from "lucide-react";
 
 interface CircularProgressProps {
@@ -178,12 +182,12 @@ export default function ModernDashboard() {
     setMounted(true);
   }, []);
 
-  const academicProgress = [
-    { subject: "Computer Science", completed: 14, total: 16, color: "#ea580c" },
-    { subject: "Mathematics", completed: 12, total: 15, color: "#f59e0b" },
-    { subject: "Physics", completed: 9, total: 12, color: "#10b981" },
-    { subject: "Literature", completed: 8, total: 10, color: "#3b82f6" },
-    { subject: "Chemistry", completed: 11, total: 14, color: "#8b5cf6" },
+  const socialProgress = [
+    { subject: "Content Creation", completed: 18, total: 25, color: "#ea580c" },
+    { subject: "Community Engagement", completed: 22, total: 30, color: "#f59e0b" },
+    { subject: "Learning Goals", completed: 15, total: 20, color: "#10b981" },
+    { subject: "Networking", completed: 12, total: 15, color: "#3b82f6" },
+    { subject: "Skill Development", completed: 8, total: 12, color: "#8b5cf6" },
   ];
 
   const weeklyActivity = [
@@ -200,29 +204,29 @@ export default function ModernDashboard() {
 
   const achievements = [
     {
-      title: "Study Streak Champion",
-      description: "14 days consecutive",
+      title: "Content Creator",
+      description: "50+ posts published",
       icon: <Trophy className="h-6 w-6" />,
       color: "#f59e0b",
       bgColor: "bg-amber-50 dark:bg-amber-900/20",
     },
     {
-      title: "Top Contributor",
-      description: "Most helpful posts this month",
+      title: "Community Leader",
+      description: "Most helpful member",
       icon: <Star className="h-6 w-6" />,
       color: "#ea580c",
       bgColor: "bg-orange-50 dark:bg-orange-900/20",
     },
     {
-      title: "Quiz Master",
-      description: "98% average score",
+      title: "Knowledge Seeker",
+      description: "100+ resources saved",
       icon: <Target className="h-6 w-6" />,
       color: "#10b981",
       bgColor: "bg-green-50 dark:bg-green-900/20",
     },
     {
-      title: "Community Builder",
-      description: "100+ connections made",
+      title: "Super Connector",
+      description: "500+ connections made",
       icon: <Users className="h-6 w-6" />,
       color: "#3b82f6",
       bgColor: "bg-blue-50 dark:bg-blue-900/20",
@@ -230,10 +234,10 @@ export default function ModernDashboard() {
   ];
 
   const upcomingEvents = [
-    { title: "Career Fair - Tech Companies", date: "Dec 15", time: "10:00 AM", type: "career" },
-    { title: "Study Group - Advanced Algorithms", date: "Dec 16", time: "2:00 PM", type: "study" },
-    { title: "Scholarship Application Deadline", date: "Dec 18", time: "11:59 PM", type: "deadline" },
-    { title: "Guest Lecture - AI in Healthcare", date: "Dec 20", time: "3:00 PM", type: "lecture" },
+    { title: "Tech Meetup - AI & Future", date: "Dec 15", time: "10:00 AM", type: "networking" },
+    { title: "Study Group - Data Science", date: "Dec 16", time: "2:00 PM", type: "study" },
+    { title: "Workshop - Digital Marketing", date: "Dec 18", time: "11:00 AM", type: "workshop" },
+    { title: "Webinar - Career Growth", date: "Dec 20", time: "3:00 PM", type: "webinar" },
   ];
 
   if (!mounted) {
@@ -251,7 +255,7 @@ export default function ModernDashboard() {
             </div>
             <div>
               <h1 className="text-3xl font-bold">Welcome back, John!</h1>
-              <p className="text-orange-100 mt-1">Computer Science • MIT • Class of 2025</p>
+              <p className="text-orange-100 mt-1">Digital Creator • Tech Enthusiast • Community Builder</p>
               <div className="flex items-center space-x-4 mt-3 text-sm">
                 <div className="flex items-center space-x-1">
                   <Calendar className="h-4 w-4" />
@@ -266,7 +270,7 @@ export default function ModernDashboard() {
           </div>
           <div className="text-right">
             <div className="text-3xl font-bold">Level 15</div>
-            <div className="text-orange-100">Academic Explorer</div>
+            <div className="text-orange-100">Social Explorer</div>
             <div className="mt-2 bg-white/20 rounded-full h-2 w-32">
               <div className="bg-white rounded-full h-2 w-24 transition-all duration-1000"></div>
             </div>
@@ -278,104 +282,104 @@ export default function ModernDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Total Connections"
-          value="1,247"
-          change="+12.5%"
+          value="2,847"
+          change="+15.2%"
           changeType="increase"
           icon={<Users className="h-6 w-6" />}
           color="#ea580c"
         />
         <StatCard
-          title="Study Hours This Week"
-          value="45"
-          change="+8.2%"
+          title="Content Views"
+          value="45.2K"
+          change="+23.1%"
           changeType="increase"
-          icon={<BookOpen className="h-6 w-6" />}
+          icon={<Eye className="h-6 w-6" />}
           color="#10b981"
         />
         <StatCard
-          title="Scholarships Applied"
-          value="12"
-          change="+3"
+          title="Engagement Rate"
+          value="8.7%"
+          change="+2.3%"
           changeType="increase"
-          icon={<Award className="h-6 w-6" />}
+          icon={<Heart className="h-6 w-6" />}
           color="#f59e0b"
         />
         <StatCard
-          title="Internship Matches"
-          value="8"
-          change="+2"
+          title="Learning Streak"
+          value="28 days"
+          change="+7 days"
           changeType="increase"
-          icon={<Briefcase className="h-6 w-6" />}
+          icon={<Zap className="h-6 w-6" />}
           color="#3b82f6"
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Academic Progress */}
+        {/* Social Progress */}
         <div className="lg:col-span-2 space-y-8">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8 border border-gray-100 dark:border-gray-700">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-8 flex items-center">
-              <GraduationCap className="h-6 w-6 text-orange-600 mr-3" />
-              Academic Progress
+              <Globe className="h-6 w-6 text-orange-600 mr-3" />
+              Social & Learning Progress
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-xl p-6">
                 <CircularProgress
-                  percentage={88}
+                  percentage={92}
                   size={120}
                   strokeWidth={8}
                   color="#ea580c"
-                  label="Overall GPA"
-                  value="3.7"
+                  label="Profile Score"
+                  value="92%"
                 />
               </div>
               <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 rounded-xl p-6">
                 <CircularProgress
-                  percentage={94}
+                  percentage={87}
                   size={120}
                   strokeWidth={8}
                   color="#f59e0b"
-                  label="Attendance"
-                  value="94%"
+                  label="Activity Rate"
+                  value="87%"
                 />
               </div>
               <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-6">
                 <CircularProgress
-                  percentage={82}
+                  percentage={95}
                   size={120}
                   strokeWidth={8}
                   color="#10b981"
-                  label="Assignments"
-                  value="82%"
+                  label="Goal Progress"
+                  value="95%"
                 />
               </div>
               <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-6">
                 <CircularProgress
-                  percentage={96}
+                  percentage={78}
                   size={120}
                   strokeWidth={8}
                   color="#3b82f6"
-                  label="Participation"
-                  value="96%"
+                  label="Network Growth"
+                  value="78%"
                 />
               </div>
             </div>
           </div>
 
-          {/* Subject Progress */}
+          {/* Progress Tracking */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8 border border-gray-100 dark:border-gray-700">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-8 flex items-center">
-              <BookOpen className="h-6 w-6 text-orange-600 mr-3" />
-              Subject Progress
+              <Target className="h-6 w-6 text-orange-600 mr-3" />
+              Goal Tracking
             </h3>
             <div className="space-y-6">
-              {academicProgress.map((subject, index) => (
+              {socialProgress.map((item, index) => (
                 <ActivityBar
                   key={index}
-                  label={subject.subject}
-                  value={subject.completed}
-                  maxValue={subject.total}
-                  color={subject.color}
+                  label={item.subject}
+                  value={item.completed}
+                  maxValue={item.total}
+                  color={item.color}
                 />
               ))}
             </div>
@@ -385,7 +389,7 @@ export default function ModernDashboard() {
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8 border border-gray-100 dark:border-gray-700">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-8 flex items-center">
               <TrendingUp className="h-6 w-6 text-orange-600 mr-3" />
-              Weekly Study Activity
+              Weekly Engagement
             </h3>
             <div className="flex items-end justify-between h-64 space-x-4">
               {weeklyActivity.map((day, index) => (
@@ -459,19 +463,19 @@ export default function ModernDashboard() {
             <h3 className="text-lg font-bold mb-6">This Month</h3>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-orange-100">Study Sessions</span>
+                <span className="text-orange-100">Posts Created</span>
                 <span className="font-bold text-xl">28</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-orange-100">New Connections</span>
-                <span className="font-bold text-xl">15</span>
+                <span className="text-orange-100">New Followers</span>
+                <span className="font-bold text-xl">156</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-orange-100">Applications Sent</span>
-                <span className="font-bold text-xl">7</span>
+                <span className="text-orange-100">Resources Shared</span>
+                <span className="font-bold text-xl">42</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-orange-100">Goals Completed</span>
+                <span className="text-orange-100">Goals Achieved</span>
                 <span className="font-bold text-xl">12/15</span>
               </div>
             </div>
