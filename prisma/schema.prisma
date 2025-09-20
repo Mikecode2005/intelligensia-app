@@ -15,27 +15,362 @@ datasource db {
   url  	    = env("DATABASE_URL")
 }
 
-model User{
-  id String @id
-  username String @unique
-  displayName String
-  email String? @unique
-  passwordHash String?
-  googleId String?
-  avatarUrl String?
-  bio String?
-  sessions Session[]
+// NextAuth.js Models
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
 
-  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("Users")
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
-model Session{
-   id        String   @id
-   userId    String   
-   expiresAt DateTime
-   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-   @@map("sessions")
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// User model with extended fields for student, tutor, and organization profiles
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  username      String?   @unique
+  displayName   String?
+  email         String?   @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  avatarUrl     String?
+  bio           String?
+  userType      UserType  @default(STUDENT)
+  
+  // NextAuth.js relations
+  accounts      Account[]
+  sessions      Session[]
+  
+  // Student-specific fields
+  fields        Field[]   @relation("UserFields")
+  performance   Performance?
+  
+  // Tutor-specific fields
+  expertise     String?
+  qualifications String?
+  
+  // Organization-specific fields
+  organizationType OrganizationType?
+  location      String?
+  website       String?
+  
+  // Relationships
+  posts         Post[]
+  comments      Comment[]
+  followers     Follow[]   @relation("Following")
+  following     Follow[]   @relation("Follower")
+  classrooms    ClassroomMember[]
+  studyGroups   StudyGroupMember[]
+  scholarshipApplications ScholarshipApplication[]
+  internshipApplications InternshipApplication[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("users")
+}
+
+enum UserType {
+  STUDENT
+  TUTOR
+  ORGANIZATION
+}
+
+enum OrganizationType {
+  SCHOOL
+  COMPANY
+  NONPROFIT
+}
+
+// Fields of study that users can select
+model Field {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  users       User[]    @relation("UserFields")
+  posts       Post[]
+  classrooms  Classroom[]
+  studyGroups StudyGroup[]
+  scholarships Scholarship[]
+  internships Internship[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// User performance metrics
+model Performance {
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Performance metrics
+  studyHours  Float     @default(0)
+  completedAssignments Int @default(0)
+  totalAssignments Int @default(0)
+  averageGrade Float?
+  
+  // Activity metrics
+  lastActive  DateTime?
+  loginStreak Int       @default(0)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// Social posts
+model Post {
+  id          String    @id @default(cuid())
+  content     String
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  fieldId     String?
+  field       Field?    @relation(fields: [fieldId], references: [id])
+  
+  likes       Int       @default(0)
+  comments    Comment[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Comment {
+  id          String    @id @default(cuid())
+  content     String
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  postId      String
+  post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// Follow relationships
+model Follow {
+  id          String    @id @default(cuid())
+  followerId  String
+  follower    User      @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  followingId String
+  following   User      @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime  @default(now())
+  
+  @@unique([followerId, followingId])
+}
+
+// Classroom functionality
+model Classroom {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  joinCode    String    @unique
+  fieldId     String?
+  field       Field?    @relation(fields: [fieldId], references: [id])
+  
+  members     ClassroomMember[]
+  assignments Assignment[]
+  resources   Resource[]
+  messages    ClassroomMessage[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model ClassroomMember {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  role        MemberRole @default(STUDENT)
+  
+  createdAt   DateTime  @default(now())
+  
+  @@unique([userId, classroomId])
+}
+
+enum MemberRole {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+model Assignment {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  dueDate     DateTime?
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Resource {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  url         String?
+  fileUrl     String?
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model ClassroomMessage {
+  id          String    @id @default(cuid())
+  content     String
+  senderId    String
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime  @default(now())
+}
+
+// Study groups
+model StudyGroup {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  fieldId     String?
+  field       Field?    @relation(fields: [fieldId], references: [id])
+  
+  members     StudyGroupMember[]
+  messages    StudyGroupMessage[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model StudyGroupMember {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studyGroupId String
+  studyGroup  StudyGroup @relation(fields: [studyGroupId], references: [id], onDelete: Cascade)
+  role        MemberRole @default(STUDENT)
+  
+  createdAt   DateTime  @default(now())
+  
+  @@unique([userId, studyGroupId])
+}
+
+model StudyGroupMessage {
+  id          String    @id @default(cuid())
+  content     String
+  senderId    String
+  studyGroupId String
+  studyGroup  StudyGroup @relation(fields: [studyGroupId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime  @default(now())
+}
+
+// Scholarships
+model Scholarship {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  amount      Float?
+  deadline    DateTime
+  requirements String?
+  organizationId String
+  fieldId     String?
+  field       Field?    @relation(fields: [fieldId], references: [id])
+  
+  applications ScholarshipApplication[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model ScholarshipApplication {
+  id            String    @id @default(cuid())
+  scholarshipId String
+  scholarship   Scholarship @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
+  applicantId   String
+  applicant     User      @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  status        ApplicationStatus @default(PENDING)
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@unique([scholarshipId, applicantId])
+}
+
+// Internships
+model Internship {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  company     String
+  location    String?
+  isRemote    Boolean   @default(false)
+  startDate   DateTime?
+  endDate     DateTime?
+  deadline    DateTime
+  requirements String?
+  organizationId String
+  fieldId     String?
+  field       Field?    @relation(fields: [fieldId], references: [id])
+  
+  applications InternshipApplication[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model InternshipApplication {
+  id            String    @id @default(cuid())
+  internshipId  String
+  internship    Internship @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+  applicantId   String
+  applicant     User      @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  status        ApplicationStatus @default(PENDING)
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@unique([internshipId, applicantId])
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

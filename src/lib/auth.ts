@@ -1,81 +1,46 @@
-import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
-import prisma from "../lib/prisma";
-import { Lucia } from "lucia";
-import { cookies } from "next/headers";
-import { cache } from "react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 
-const adapter = new PrismaAdapter(prisma.session, prisma.user);
-
-export const lucia = new Lucia(adapter, {
-  sessionCookie: {
-    attributes: {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-    }
-  },
-  getUserAttributes: (databaseUserAttributes) => {
-    return {
-      id: databaseUserAttributes.id,
-      username: databaseUserAttributes.username,
-      displayName: databaseUserAttributes.displayName,
-      avatarUrl: databaseUserAttributes.avatarUrl,
-      googleId: databaseUserAttributes.googleId,
-    };
-  },
-});
-
-declare module "lucia" {
-  interface Register {
-    Lucia: typeof lucia;
-    DatabaseUserAttributes: {
-      id: string;
-      username: string;
-      displayName: string;
-      avatarUrl: string | null;
-      googleId: string | null;
-    };
-  }
+/**
+ * Get the current session on the server
+ */
+export async function getSession() {
+  return await getServerSession(authOptions);
 }
 
-// Server-side validation function
+/**
+ * Validate request (returns { user })
+ */
 export async function validateRequest() {
-  const cookieStore = cookies();
-  const sessionId = (await cookieStore).get(lucia.sessionCookieName)?.value ?? null;
-
-  if (!sessionId) {
-    return {
-      user: null,
-      session: null
-    };
-  }
-
-  const result = await lucia.validateSession(sessionId);
-
-  try {
-    if (result.session?.fresh) {
-      const sessionCookie = lucia.createSessionCookie(result.session.id);
-      (await cookieStore).set(
-        sessionCookie.name,
-        sessionCookie.value,
-        sessionCookie.attributes
-      );
-    }
-    if (!result.session) {
-      const sessionCookie = lucia.createBlankSessionCookie();
-      (await cookieStore).set(
-        sessionCookie.name,
-        sessionCookie.value,
-        sessionCookie.attributes
-      );
-    }
-  } catch (error) {
-    console.error("Session validation error:", error);
-  }
-  
-  return result;
+  const session = await getServerSession(authOptions);
+  return { user: session?.user };
 }
 
-// Type exports
-export type User = Awaited<ReturnType<typeof validateRequest>>["user"];
-export type Session = Awaited<ReturnType<typeof validateRequest>>["session"];
+/**
+ * Get the current user
+ */
+export async function getCurrentUser() {
+  const session = await getSession();
+  return session?.user;
+}
+
+/**
+ * Require authentication
+ */
+export async function requireAuth(redirectTo = "/login") {
+  const user = await getCurrentUser();
+  if (!user) redirect(redirectTo);
+  return user;
+}
+
+/**
+ * Require role-based authentication
+ */
+export async function requireRole(roles: string[], redirectTo = "/dashboard") {
+  const user = await requireAuth();
+  if (!roles.includes(user.userType)) {
+    redirect(redirectTo);
+  }
+  return user;
+}

@@ -1,108 +1,100 @@
-import { google, lucia } from "@/auth";
-import kyInstance from "@/lib/ky";
+// app/api/auth/callback/google/route.ts
+import { google } from "@/auth";
 import prisma from "@/lib/prisma";
 import streamServerClient from "@/lib/stream";
 import { slugify } from "@/lib/utils";
 import { OAuth2RequestError } from "arctic";
-import { generateIdFromEntropySize } from "lucia";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const code = req.nextUrl.searchParams.get("code");
-  const state = req.nextUrl.searchParams.get("state");
+  const url = req.nextUrl;
+  const code = url.searchParams.get("code");
+  const state = url.searchParams.get("state");
+  const storedState = cookies().get("google_oauth_state")?.value;
 
-  const storedState = cookies().get("state")?.value;
-  const storedCodeVerifier = cookies().get("code_verifier")?.value;
-
-  if (
-    !code ||
-    !state ||
-    !storedState ||
-    !storedCodeVerifier ||
-    state !== storedState
-  ) {
-    return new Response(null, { status: 400 });
+  if (!code || !state || state !== storedState) {
+    return new Response("Invalid OAuth callback parameters", { status: 400 });
   }
 
   try {
-    const tokens = await google.validateAuthorizationCode(
-      code,
-      storedCodeVerifier,
+    // 🔑 Exchange code for tokens
+    const tokens = await google.validateAuthorizationCode(code);
+
+    // 🔎 Fetch Google user info
+    const googleUserRes = await fetch(
+      "https://www.googleapis.com/oauth2/v2/userinfo",
+      {
+        headers: { Authorization: `Bearer ${tokens.accessToken}` },
+      }
     );
+    const googleUser = await googleUserRes.json() as {
+      id: string;
+      name: string;
+      email?: string;
+      picture?: string;
+    };
 
-    const googleUser = await kyInstance
-      .get("https://www.googleapis.com/oauth2/v1/userinfo", {
-        headers: {
-          Authorization: `Bearer ${tokens.accessToken}`,
-        },
-      })
-      .json<{ id: string; name: string }>();
-
-    const existingUser = await prisma.user.findUnique({
-      where: {
-        googleId: googleUser.id,
-      },
+    // 🗂 Check for existing user
+    let user = await prisma.user.findUnique({
+      where: { googleId: googleUser.id },
     });
 
-    if (existingUser) {
-      const session = await lucia.createSession(existingUser.id, {});
-      const sessionCookie = lucia.createSessionCookie(session.id);
-      cookies().set(
-        sessionCookie.name,
-        sessionCookie.value,
-        sessionCookie.attributes,
-      );
-      return new Response(null, {
-        status: 302,
-        headers: {
-          Location: "/",
-        },
-      });
-    }
+    if (!user) {
+      // 🆕 Create new user
+      const userId = crypto.randomUUID();
+      const username = slugify(googleUser.name) + "-" + userId.slice(0, 4);
 
-    const userId = generateIdFromEntropySize(10);
-
-    const username = slugify(googleUser.name) + "-" + userId.slice(0, 4);
-
-    await prisma.$transaction(async (tx) => {
-      await tx.user.create({
+      user = await prisma.user.create({
         data: {
           id: userId,
           username,
           displayName: googleUser.name,
+          email: googleUser.email,
+          avatarUrl: googleUser.picture,
           googleId: googleUser.id,
+          userType: "STUDENT",
         },
       });
-      await streamServerClient.upsertUser({
-        id: userId,
-        username,
-        name: username,
-      });
-    });
 
-    const session = await lucia.createSession(userId, {});
-    const sessionCookie = lucia.createSessionCookie(session.id);
-    cookies().set(
-      sessionCookie.name,
-      sessionCookie.value,
-      sessionCookie.attributes,
-    );
-
-    return new Response(null, {
-      status: 302,
-      headers: {
-        Location: "/",
-      },
-    });
-  } catch (error) {
-    console.error(error);
-    if (error instanceof OAuth2RequestError) {
-      return new Response(null, {
-        status: 400,
+      // Optional: create performance row
+      await prisma.performance.create({
+        data: {
+          userId,
+          loginStreak: 1,
+          lastActive: new Date(),
+        },
       });
+
+      // Optional: Stream chat user
+      if (process.env.NEXT_PUBLIC_STREAM_KEY && process.env.STREAM_SECRET) {
+        await streamServerClient.upsertUser({
+          id: userId,
+          username,
+          name: googleUser.name,
+          image: googleUser.picture,
+        });
+      }
     }
-    return new Response(null, {
+
+    // ✅ Store user ID in cookie (replace Lucia)
+    cookies().set("auth_user_id", user.id, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    // Redirect to dashboard or onboarding
+    return Response.redirect(new URL("/dashboard", req.url));
+  } catch (err) {
+    console.error("Google OAuth error:", err);
+
+    if (err instanceof OAuth2RequestError) {
+      return new Response("OAuth authentication failed", { status: 400 });
+    }
+
+    return new Response("Internal server error during authentication", {
       status: 500,
     });
   }

@@ -1,4 +1,4 @@
-import { validateRequest } from "@/lib/auth";
+import getServerSession from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import streamServerClient from "@/lib/stream";
 import { createUploadthing, FileRouter } from "uploadthing/next";
@@ -11,7 +11,7 @@ export const fileRouter = {
     image: { maxFileSize: "512KB" },
   })
     .middleware(async () => {
-      const { user } = await validateRequest();
+      const { user } = await getServerSession();
 
       if (!user) throw new UploadThingError("Unauthorized");
 

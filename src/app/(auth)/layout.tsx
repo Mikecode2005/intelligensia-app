@@ -1,5 +1,5 @@
 // src/app/(main)/layout.tsx
-import { validateRequest } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function MainLayout({
@@ -7,11 +7,13 @@ export default async function MainLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = await validateRequest();
+  const session = await getSession();
 
-  if (!user) {
-    redirect("/login");
-  }
+ 
 
-  return <>{children}</>;
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
 }
