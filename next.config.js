@@ -1,3 +1,4 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
     staleTimes: {
@@ -5,11 +6,11 @@ const nextConfig = {
     },
   },
   serverExternalPackages: ["@node-rs/argon2"],
+  transpilePackages: ['zod', '@hookform/resolvers'],
   webpack: (config) => {
     config.resolve.extensions.push('.mjs');
     return config;
   },
-  transpilePackages: ['zod', '@hookform/resolvers'],
 };
 
 module.exports = nextConfig;

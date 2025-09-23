@@ -1,4 +1,4 @@
-import getServerSession from "@/lib/auth";
+import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import streamServerClient from "@/lib/stream";
 import { createUploadthing, FileRouter } from "uploadthing/next";
@@ -11,7 +11,7 @@ export const fileRouter = {
     image: { maxFileSize: "512KB" },
   })
     .middleware(async () => {
-      const { user } = await getServerSession();
+      const { user } = await validateRequest();
 
       if (!user) throw new UploadThingError("Unauthorized");
 
@@ -50,29 +50,39 @@ export const fileRouter = {
 
       return { avatarUrl: newAvatarUrl };
     }),
+  
   attachment: f({
     image: { maxFileSize: "4MB", maxFileCount: 5 },
     video: { maxFileSize: "64MB", maxFileCount: 5 },
+    pdf: { maxFileSize: "16MB", maxFileCount: 5 },
   })
     .middleware(async () => {
       const { user } = await validateRequest();
 
       if (!user) throw new UploadThingError("Unauthorized");
 
-      return {};
+      return { userId: user.id };
     })
-    .onUploadComplete(async ({ file }) => {
-      const media = await prisma.media.create({
+    .onUploadComplete(async ({ metadata, file }) => {
+      // Determine file type
+      let fileType = "DOCUMENT";
+      if (file.type.startsWith("image/")) fileType = "IMAGE";
+      if (file.type.startsWith("video/")) fileType = "VIDEO";
+      if (file.type === "application/pdf") fileType = "DOCUMENT";
+
+      // Create attachment record
+      const attachment = await prisma.attachment.create({
         data: {
           url: file.url.replace(
             "/f/",
             `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
           ),
-          type: file.type.startsWith("image") ? "IMAGE" : "VIDEO",
+          type: fileType,
+          // Note: postId will be set when the attachment is linked to a post
         },
       });
 
-      return { mediaId: media.id };
+      return { attachmentId: attachment.id };
     }),
 } satisfies FileRouter;
 

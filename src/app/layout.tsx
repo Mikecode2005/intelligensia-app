@@ -9,13 +9,29 @@ import "./globals.css";
 import ReactQueryProvider from "./ReactQueryProvider";
 import AuthProvider from "@/components/providers/AuthProvider";
 
+// Using a more reliable approach for local fonts
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
+  src: [
+    {
+      path: "./fonts/GeistVF.woff",
+      weight: "100 900",
+      style: "normal",
+    },
+  ],
   variable: "--font-geist-sans",
+  display: "swap", // Add display strategy
 });
+
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
+  src: [
+    {
+      path: "./fonts/GeistMonoVF.woff",
+      weight: "100 900",
+      style: "normal",
+    },
+  ],
   variable: "--font-geist-mono",
+  display: "swap", // Add display strategy
 });
 
 export const metadata: Metadata = {
@@ -32,8 +48,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextSSRPlugin routerConfig={extractRouterConfig(fileRouter)} />
         <AuthProvider>
           <ReactQueryProvider>
