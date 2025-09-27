@@ -1,3 +1,4 @@
+// src/lib/validation.ts
 import { z } from "zod";
 
 /**
@@ -94,6 +95,14 @@ export const fieldSelectionSchema = z.object({
 });
 
 /**
+ * Post creation schema - ADD THIS
+ */
+export const createPostSchema = z.object({
+  content: requiredString.min(1, "Content is required").max(10000, "Content too long"),
+  mediaIds: z.array(z.string()).optional().default([]),
+});
+
+/**
  * Type exports
  */
 export type SignUpValues = z.infer<typeof signUpSchema>;
@@ -102,3 +111,4 @@ export type PasswordResetRequestValues = z.infer<typeof passwordResetRequestSche
 export type PasswordResetValues = z.infer<typeof passwordResetSchema>;
 export type ProfileUpdateValues = z.infer<typeof profileUpdateSchema>;
 export type FieldSelectionValues = z.infer<typeof fieldSelectionSchema>;
+export type CreatePostValues = z.infer<typeof createPostSchema>; // Add this

@@ -31,9 +31,10 @@ export type UserData = Prisma.UserGetPayload<{
 
 export function getPostDataInclude(loggedInUserId: string) {
   return {
-    user: {
+    author: {  // Changed from 'user' to 'author'
       select: getUserDataSelect(loggedInUserId),
     },
+    field: true, // Add field relation
     attachments: true,
     likes: {
       where: {
@@ -50,6 +51,17 @@ export function getPostDataInclude(loggedInUserId: string) {
       select: {
         userId: true,
       },
+    },
+    comments: {  // Add comments relation
+      include: {
+        author: {
+          select: getUserDataSelect(loggedInUserId),
+        },
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      take: 5
     },
     _count: {
       select: {
@@ -71,7 +83,7 @@ export interface PostsPage {
 
 export function getCommentDataInclude(loggedInUserId: string) {
   return {
-    user: {
+    author: {  // Changed from 'user' to 'author'
       select: getUserDataSelect(loggedInUserId),
     },
   } satisfies Prisma.CommentInclude;
@@ -87,18 +99,14 @@ export interface CommentsPage {
 }
 
 export const notificationsInclude = {
-  issuer: {
+  sender: {  // Changed from 'issuer' to 'sender' to match your schema
     select: {
       username: true,
       displayName: true,
       avatarUrl: true,
     },
   },
-  post: {
-    select: {
-      content: true,
-    },
-  },
+  // Remove 'post' if you don't have this relation, or add it to your Notification model
 } satisfies Prisma.NotificationInclude;
 
 export type NotificationData = Prisma.NotificationGetPayload<{

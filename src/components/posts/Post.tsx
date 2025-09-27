@@ -25,22 +25,29 @@ export default function Post({ post }: PostProps) {
 
   const [showComments, setShowComments] = useState(false);
 
+  // Safe access with optional chaining and fallbacks
+  const author = post?.author || post?.user; // Try both author and user
+  const authorName = author?.displayName || author?.username || 'Unknown User';
+  const authorUsername = author?.username || 'unknown';
+  const authorAvatar = author?.avatarUrl;
+  const isOwnPost = author?.id === user?.id;
+
   return (
     <article className="group/post space-y-3 rounded-2xl bg-card p-5 shadow-sm">
       <div className="flex justify-between gap-3">
         <div className="flex flex-wrap gap-3">
-          <UserTooltip user={post.user}>
-            <Link href={`/users/${post.user.username}`}>
-              <UserAvatar avatarUrl={post.user.avatarUrl} />
+          <UserTooltip user={author}>
+            <Link href={`/users/${authorUsername}`}>
+              <UserAvatar avatarUrl={authorAvatar} />
             </Link>
           </UserTooltip>
           <div>
-            <UserTooltip user={post.user}>
+            <UserTooltip user={author}>
               <Link
-                href={`/users/${post.user.username}`}
+                href={`/users/${authorUsername}`}
                 className="block font-medium hover:underline"
               >
-                {post.user.displayName}
+                {authorName}
               </Link>
             </UserTooltip>
             <Link
@@ -52,7 +59,7 @@ export default function Post({ post }: PostProps) {
             </Link>
           </div>
         </div>
-        {post.user.id === user.id && (
+        {isOwnPost && (
           <PostMoreButton
             post={post}
             className="opacity-0 transition-opacity group-hover/post:opacity-100"
@@ -62,7 +69,7 @@ export default function Post({ post }: PostProps) {
       <Linkify>
         <div className="whitespace-pre-line break-words">{post.content}</div>
       </Linkify>
-      {!!post.attachments.length && (
+      {!!post.attachments?.length && (
         <MediaPreviews attachments={post.attachments} />
       )}
       <hr className="text-muted-foreground" />
@@ -71,8 +78,8 @@ export default function Post({ post }: PostProps) {
           <LikeButton
             postId={post.id}
             initialState={{
-              likes: post._count.likes,
-              isLikedByUser: post.likes.some((like) => like.userId === user.id),
+              likes: post._count?.likes || 0,
+              isLikedByUser: post.likes?.some((like) => like.userId === user?.id) || false,
             }}
           />
           <CommentButton
@@ -83,9 +90,9 @@ export default function Post({ post }: PostProps) {
         <BookmarkButton
           postId={post.id}
           initialState={{
-            isBookmarkedByUser: post.bookmarks.some(
-              (bookmark) => bookmark.userId === user.id,
-            ),
+            isBookmarkedByUser: post.bookmarks?.some(
+              (bookmark) => bookmark.userId === user?.id,
+            ) || false,
           }}
         />
       </div>
@@ -155,7 +162,7 @@ function CommentButton({ post, onClick }: CommentButtonProps) {
     <button onClick={onClick} className="flex items-center gap-2">
       <MessageSquare className="size-5" />
       <span className="text-sm font-medium tabular-nums">
-        {post._count.comments}{" "}
+        {post._count?.comments || 0}{" "}
         <span className="hidden sm:inline">comments</span>
       </span>
     </button>

@@ -6,3 +6,4 @@ const streamServerClient = StreamChat.getInstance(
 );
 
 export default streamServerClient;
+  

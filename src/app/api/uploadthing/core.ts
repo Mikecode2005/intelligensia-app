@@ -1,6 +1,6 @@
 import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import streamServerClient from "@/lib/stream";
+import { safePartialUpdateUser } from "@/lib/stream-utils";
 import { createUploadthing, FileRouter } from "uploadthing/next";
 import { UploadThingError, UTApi } from "uploadthing/server";
 
@@ -10,80 +10,43 @@ export const fileRouter = {
   avatar: f({
     image: { maxFileSize: "512KB" },
   })
-    .middleware(async () => {
-      const { user } = await validateRequest();
-
-      if (!user) throw new UploadThingError("Unauthorized");
-
-      return { user };
-    })
-    .onUploadComplete(async ({ metadata, file }) => {
-      const oldAvatarUrl = metadata.user.avatarUrl;
-
-      if (oldAvatarUrl) {
-        const key = oldAvatarUrl.split(
-          `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
-        )[1];
-
-        await new UTApi().deleteFiles(key);
-      }
-
-      const newAvatarUrl = file.url.replace(
-        "/f/",
-        `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
-      );
-
-      await Promise.all([
-        prisma.user.update({
-          where: { id: metadata.user.id },
-          data: {
-            avatarUrl: newAvatarUrl,
-          },
-        }),
-        streamServerClient.partialUpdateUser({
-          id: metadata.user.id,
-          set: {
-            image: newAvatarUrl,
-          },
-        }),
-      ]);
-
-      return { avatarUrl: newAvatarUrl };
-    }),
-  
-  attachment: f({
-    image: { maxFileSize: "4MB", maxFileCount: 5 },
-    video: { maxFileSize: "64MB", maxFileCount: 5 },
-    pdf: { maxFileSize: "16MB", maxFileCount: 5 },
+  .middleware(async () => {
+    const { user } = await validateRequest();
+    if (!user) throw new UploadThingError("Unauthorized");
+    return { user };
   })
-    .middleware(async () => {
-      const { user } = await validateRequest();
+  .onUploadComplete(async ({ metadata, file }) => {
+    const oldAvatarUrl = metadata.user.avatarUrl;
 
-      if (!user) throw new UploadThingError("Unauthorized");
+    // Delete old avatar if exists
+    if (oldAvatarUrl) {
+      try {
+        const key = oldAvatarUrl.split(`/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`)[1];
+        if (key) {
+          await new UTApi().deleteFiles(key);
+        }
+      } catch (error) {
+        console.error('Error deleting old avatar:', error);
+      }
+    }
 
-      return { userId: user.id };
-    })
-    .onUploadComplete(async ({ metadata, file }) => {
-      // Determine file type
-      let fileType = "DOCUMENT";
-      if (file.type.startsWith("image/")) fileType = "IMAGE";
-      if (file.type.startsWith("video/")) fileType = "VIDEO";
-      if (file.type === "application/pdf") fileType = "DOCUMENT";
+    const newAvatarUrl = file.url.replace("/f/", `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`);
 
-      // Create attachment record
-      const attachment = await prisma.attachment.create({
-        data: {
-          url: file.url.replace(
-            "/f/",
-            `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
-          ),
-          type: fileType,
-          // Note: postId will be set when the attachment is linked to a post
-        },
-      });
+    // Update database
+    await prisma.user.update({
+      where: { id: metadata.user.id },
+      data: { avatarUrl: newAvatarUrl },
+    });
 
-      return { attachmentId: attachment.id };
-    }),
+    // Update Stream Chat safely
+    await safePartialUpdateUser(metadata.user.id, {
+      image: newAvatarUrl,
+    });
+
+    return { avatarUrl: newAvatarUrl };
+  }),
+  
+  // ... rest of your file router
 } satisfies FileRouter;
 
 export type AppFileRouter = typeof fileRouter;

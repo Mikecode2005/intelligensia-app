@@ -2,10 +2,7 @@ import * as React from "react";
 
 export function Card({ className = "", ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div
-      className={`rounded-2xl border bg-white dark:bg-gray-900 shadow-sm ${className}`}
-      {...props}
-    />
+    <div className={`rounded-2xl border bg-white dark:bg-gray-900 shadow-sm ${className}`} {...props} />
   );
 }
 
@@ -23,4 +20,10 @@ export function CardTitle({ className = "", ...props }: React.HTMLAttributes<HTM
 
 export function CardContent({ className = "", ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={`px-4 py-2 ${className}`} {...props} />;
+}
+
+export function CardFooter({ className = "", ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={`px-4 py-2 border-t border-gray-100 dark:border-gray-800 ${className}`} {...props} />
+  );
 }

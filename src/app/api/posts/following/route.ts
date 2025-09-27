@@ -1,4 +1,5 @@
-import { validateRequest } from "@/auth";
+// src/app/api/posts/for-you/route.ts
+import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getPostDataInclude, PostsPage } from "@/lib/types";
 import { NextRequest } from "next/server";
@@ -6,7 +7,6 @@ import { NextRequest } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
-
     const pageSize = 10;
 
     const { user } = await validateRequest();
@@ -17,10 +17,10 @@ export async function GET(req: NextRequest) {
 
     const posts = await prisma.post.findMany({
       where: {
-        user: {
+        author: {
           followers: {
             some: {
-              followerId: user.id,
+              followerId: user.id, // Current user is following the author
             },
           },
         },
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
 
     return Response.json(data);
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching posts:", error);
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }

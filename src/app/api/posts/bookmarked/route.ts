@@ -1,4 +1,4 @@
-import { validateRequest } from "@/auth";
+import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getPostDataInclude, PostsPage } from "@/lib/types";
 import { NextRequest } from "next/server";
@@ -6,7 +6,6 @@ import { NextRequest } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
-
     const pageSize = 10;
 
     const { user } = await validateRequest();
@@ -24,15 +23,17 @@ export async function GET(req: NextRequest) {
           include: getPostDataInclude(user.id),
         },
       },
+      // Fix: Order by the post's creation date instead of bookmark's
       orderBy: {
-        createdAt: "desc",
+        post: {
+          createdAt: "desc",
+        },
       },
       take: pageSize + 1,
       cursor: cursor ? { id: cursor } : undefined,
     });
 
-    const nextCursor =
-      bookmarks.length > pageSize ? bookmarks[pageSize].id : null;
+    const nextCursor = bookmarks.length > pageSize ? bookmarks[pageSize].id : null;
 
     const data: PostsPage = {
       posts: bookmarks.slice(0, pageSize).map((bookmark) => bookmark.post),

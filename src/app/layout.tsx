@@ -1,15 +1,15 @@
 import { Toaster } from "@/components/ui/toaster";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import type { Metadata } from "next";
-import { ThemeProvider } from "next-themes";
 import localFont from "next/font/local";
 import { extractRouterConfig } from "uploadthing/server";
 import { fileRouter } from "./api/uploadthing/core";
 import "./globals.css";
-import ReactQueryProvider from "./ReactQueryProvider";
-import AuthProvider from "@/components/providers/AuthProvider";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { Providers } from "./providers";
 
-// Using a more reliable approach for local fonts
+// Font configurations
 const geistSans = localFont({
   src: [
     {
@@ -19,7 +19,7 @@ const geistSans = localFont({
     },
   ],
   variable: "--font-geist-sans",
-  display: "swap", // Add display strategy
+  display: "swap",
 });
 
 const geistMono = localFont({
@@ -31,7 +31,7 @@ const geistMono = localFont({
     },
   ],
   variable: "--font-geist-mono",
-  display: "swap", // Add display strategy
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -42,27 +42,22 @@ export const metadata: Metadata = {
   description: "Connect with students all over the world",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextSSRPlugin routerConfig={extractRouterConfig(fileRouter)} />
-        <AuthProvider>
-          <ReactQueryProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              {children}
-            </ThemeProvider>
-          </ReactQueryProvider>
-        </AuthProvider>
+        
+        <Providers session={session}>
+          {children}
+        </Providers>
+        
         <Toaster />
       </body>
     </html>

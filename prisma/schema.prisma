@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch"]
+  previewFeatures = ["fullTextSearchPostgres"]
 }
 
 datasource db {
@@ -8,22 +8,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// NextAuth.js models
 model Account {
   id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -48,53 +46,316 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
-// User model - UPDATED
+model Like {
+  id     String @id @default(cuid())
+  userId String
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+}
+
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  username      String?   @unique
-  displayName   String?
-  email         String?   @unique
-  emailVerified DateTime?
-  password      String?
-  image         String?
-  avatarUrl     String?
-  bio           String?
-  userType      UserType  @default(STUDENT)
-
-  accounts Account[]
-  sessions Session[]
-
-  userFields UserField[]
-
-  performance Performance?
-
-  expertise      String?
-  qualifications String?
-
-  organizationType OrganizationType?
-  location         String?
-  website          String?
-
-  posts                   Post[]
-  comments                Comment[]
-  followers               Follow[]                 @relation("Following")
-  following               Follow[]                 @relation("Follower")
+  id                      String                   @id @default(cuid())
+  name                    String?
+  username                String?                  @unique
+  displayName             String?
+  email                   String?                  @unique
+  emailVerified           DateTime?
+  password                String?
+  image                   String?
+  avatarUrl               String?
+  bio                     String?
+  userType                UserType                 @default(STUDENT)
+  expertise               String?
+  qualifications          String?
+  organizationType        OrganizationType?
+  location                String?
+  website                 String?
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
   classrooms              ClassroomMember[]
-  studyGroups             StudyGroupMember[]
-  scholarshipApplications ScholarshipApplication[]
+  comments                Comment[]
+  following               Follow[]                 @relation("Follower")
+  followers               Follow[]                 @relation("Following")
   internshipApplications  InternshipApplication[]
-
-  // NEW RELATIONS ADDED:
-  notifications          Notification[]
-  conversations1         Conversation[]           @relation("Conversations1")
-  conversations2         Conversation[]           @relation("Conversations2")
-  sentMessages          ConversationMessage[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  performance             Performance?
+  posts                   Post[]
+  scholarshipApplications ScholarshipApplication[]
+  studyGroups             StudyGroupMember[]
+  userFields              UserField[]
+  accounts                Account[]
+  sessions                Session[]
+  likes                   Like[]
+  bookmarks               Bookmark[]
+  sentNotifications       Notification[]           @relation("NotificationSender")
+  receivedNotifications   Notification[]           @relation("NotificationRecipient")
 
   @@map("users")
+}
+
+model UserField {
+  fieldId String @map("A")
+  userId  String @map("B")
+  field   Field  @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([fieldId, userId], map: "_UserFields_AB_pkey")
+  @@map("_UserFields")
+}
+
+model Field {
+  id           String        @id @default(cuid())
+  name         String        @unique
+  description  String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  classrooms   Classroom[]
+  internships  Internship[]
+  posts        Post[]
+  scholarships Scholarship[]
+  studyGroups  StudyGroup[]
+  userFields   UserField[]
+}
+
+model Performance {
+  id                   String    @id @default(cuid())
+  userId               String    @unique
+  studyHours           Float     @default(0)
+  completedAssignments Int       @default(0)
+  totalAssignments     Int       @default(0)
+  averageGrade         Float?
+  lastActive           DateTime?
+  loginStreak          Int       @default(0)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id          String       @id @default(cuid())
+  content     String
+  authorId    String
+  fieldId     String?
+  likes       Like[]
+  likesCount  Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  comments    Comment[]
+  author      User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  field       Field?       @relation(fields: [fieldId], references: [id])
+  attachments Attachment[]
+  bookmarks   Bookmark[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  authorId  String
+  postId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  follower    User     @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+}
+
+model Attachment {
+  id     String @id @default(cuid())
+  url    String
+  type   String
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Bookmark {
+  id     String @id @default(cuid())
+  userId String
+  postId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  type        String
+  message     String
+  recipientId String
+  senderId    String?
+  relatedId   String?
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  recipient User  @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  sender    User? @relation("NotificationSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model Classroom {
+  id          String             @id @default(cuid())
+  name        String
+  description String?
+  joinCode    String             @unique
+  fieldId     String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  assignments Assignment[]
+  field       Field?             @relation(fields: [fieldId], references: [id])
+  members     ClassroomMember[]
+  messages    ClassroomMessage[]
+  resources   Resource[]
+}
+
+model ClassroomMember {
+  id          String     @id @default(cuid())
+  userId      String
+  classroomId String
+  role        MemberRole @default(STUDENT)
+  createdAt   DateTime   @default(now())
+  classroom   Classroom  @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, classroomId])
+}
+
+model Assignment {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  dueDate     DateTime?
+  classroomId String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+}
+
+model Resource {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  url         String?
+  fileUrl     String?
+  classroomId String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+}
+
+model ClassroomMessage {
+  id          String    @id @default(cuid())
+  content     String
+  senderId    String
+  classroomId String
+  createdAt   DateTime  @default(now())
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+}
+
+model StudyGroup {
+  id          String              @id @default(cuid())
+  name        String
+  description String?
+  fieldId     String?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  field       Field?              @relation(fields: [fieldId], references: [id])
+  members     StudyGroupMember[]
+  messages    StudyGroupMessage[]
+}
+
+model StudyGroupMember {
+  id           String     @id @default(cuid())
+  userId       String
+  studyGroupId String
+  role         MemberRole @default(STUDENT)
+  createdAt    DateTime   @default(now())
+  studyGroup   StudyGroup @relation(fields: [studyGroupId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, studyGroupId])
+}
+
+model StudyGroupMessage {
+  id           String     @id @default(cuid())
+  content      String
+  senderId     String
+  studyGroupId String
+  createdAt    DateTime   @default(now())
+  studyGroup   StudyGroup @relation(fields: [studyGroupId], references: [id], onDelete: Cascade)
+}
+
+model Scholarship {
+  id             String                   @id @default(cuid())
+  title          String
+  description    String
+  amount         Float?
+  deadline       DateTime
+  requirements   String?
+  organizationId String
+  fieldId        String?
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+  field          Field?                   @relation(fields: [fieldId], references: [id])
+  applications   ScholarshipApplication[]
+}
+
+model ScholarshipApplication {
+  id            String            @id @default(cuid())
+  scholarshipId String
+  applicantId   String
+  status        ApplicationStatus @default(PENDING)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  applicant     User              @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  scholarship   Scholarship       @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
+
+  @@unique([scholarshipId, applicantId])
+}
+
+model Internship {
+  id             String                  @id @default(cuid())
+  title          String
+  description    String
+  company        String
+  location       String?
+  isRemote       Boolean                 @default(false)
+  startDate      DateTime?
+  endDate        DateTime?
+  deadline       DateTime
+  requirements   String?
+  organizationId String
+  fieldId        String?
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+  field          Field?                  @relation(fields: [fieldId], references: [id])
+  applications   InternshipApplication[]
+}
+
+model InternshipApplication {
+  id           String            @id @default(cuid())
+  internshipId String
+  applicantId  String
+  status       ApplicationStatus @default(PENDING)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  applicant    User              @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  internship   Internship        @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+
+  @@unique([internshipId, applicantId])
 }
 
 enum UserType {
@@ -109,321 +370,14 @@ enum OrganizationType {
   NONPROFIT
 }
 
-// Explicit join table for User <-> Field (fixed for your PostgreSQL table)
-model UserField {
-  userId  String @map("B")   // column B in _UserFields
-  fieldId String @map("A")   // column A in _UserFields
-
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  field Field @relation(fields: [fieldId], references: [id], onDelete: Cascade)
-
-  @@id([userId, fieldId])
-  @@map("_UserFields")       // maps to your actual DB table
-}
-
-// Fields of study
-model Field {
-  id           String        @id @default(cuid())
-  name         String        @unique
-  description  String?
-  userFields   UserField[]
-  posts        Post[]
-  classrooms   Classroom[]
-  studyGroups  StudyGroup[]
-  scholarships Scholarship[]
-  internships  Internship[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// User performance metrics
-model Performance {
-  id     String @id @default(cuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  studyHours           Float  @default(0)
-  completedAssignments Int    @default(0)
-  totalAssignments     Int    @default(0)
-  averageGrade         Float?
-
-  lastActive  DateTime?
-  loginStreak Int       @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// Social posts
-model Post {
-  id       String  @id @default(cuid())
-  content  String
-  authorId String
-  author   User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  fieldId  String?
-  field    Field?  @relation(fields: [fieldId], references: [id])
-
-  likes    Int       @default(0)
-  comments Comment[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Comment {
-  id       String @id @default(cuid())
-  content  String
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  postId   String
-  post     Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// Follow relationships
-model Follow {
-  id          String @id @default(cuid())
-  followerId  String
-  follower    User   @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
-  followingId String
-  following   User   @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  @@unique([followerId, followingId])
-}
-
-// Classroom functionality
-model Classroom {
-  id          String  @id @default(cuid())
-  name        String
-  description String?
-  joinCode    String  @unique
-  fieldId     String?
-  field       Field?  @relation(fields: [fieldId], references: [id])
-
-  members     ClassroomMember[]
-  assignments Assignment[]
-  resources   Resource[]
-  messages    ClassroomMessage[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ClassroomMember {
-  id          String     @id @default(cuid())
-  userId      String
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  classroomId String
-  classroom   Classroom  @relation(fields: [classroomId], references: [id], onDelete: Cascade)
-  role        MemberRole @default(STUDENT)
-
-  createdAt DateTime @default(now())
-
-  @@unique([userId, classroomId])
-}
-
 enum MemberRole {
   STUDENT
   TEACHER
   ADMIN
 }
 
-model Assignment {
-  id          String    @id @default(cuid())
-  title       String
-  description String
-  dueDate     DateTime?
-  classroomId String
-  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Resource {
-  id          String    @id @default(cuid())
-  title       String
-  description String?
-  url         String?
-  fileUrl     String?
-  classroomId String
-  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ClassroomMessage {
-  id          String    @id @default(cuid())
-  content     String
-  senderId    String
-  classroomId String
-  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-}
-
-// Study groups
-model StudyGroup {
-  id          String  @id @default(cuid())
-  name        String
-  description String?
-  fieldId     String?
-  field       Field?  @relation(fields: [fieldId], references: [id])
-
-  members  StudyGroupMember[]
-  messages StudyGroupMessage[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model StudyGroupMember {
-  id           String     @id @default(cuid())
-  userId       String
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  studyGroupId String
-  studyGroup   StudyGroup @relation(fields: [studyGroupId], references: [id], onDelete: Cascade)
-  role         MemberRole @default(STUDENT)
-
-  createdAt DateTime @default(now())
-
-  @@unique([userId, studyGroupId])
-}
-
-model StudyGroupMessage {
-  id           String     @id @default(cuid())
-  content      String
-  senderId     String
-  studyGroupId String
-  studyGroup   StudyGroup @relation(fields: [studyGroupId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-}
-
-// Scholarships
-model Scholarship {
-  id             String   @id @default(cuid())
-  title          String
-  description    String
-  amount         Float?
-  deadline       DateTime
-  requirements   String?
-  organizationId String
-  fieldId        String?
-  field          Field?   @relation(fields: [fieldId], references: [id])
-
-  applications ScholarshipApplication[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ScholarshipApplication {
-  id            String            @id @default(cuid())
-  scholarshipId String
-  scholarship   Scholarship       @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
-  applicantId   String
-  applicant     User              @relation(fields: [applicantId], references: [id], onDelete: Cascade)
-  status        ApplicationStatus @default(PENDING)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([scholarshipId, applicantId])
-}
-
-// Internships
-model Internship {
-  id             String    @id @default(cuid())
-  title          String
-  description    String
-  company        String
-  location       String?
-  isRemote       Boolean   @default(false)
-  startDate      DateTime?
-  endDate        DateTime?
-  deadline       DateTime
-  requirements   String?
-  organizationId String
-  fieldId        String?
-  field          Field?    @relation(fields: [fieldId], references: [id])
-
-  applications InternshipApplication[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model InternshipApplication {
-  id           String            @id @default(cuid())
-  internshipId String
-  internship   Internship        @relation(fields: [internshipId], references: [id], onDelete: Cascade)
-  applicantId  String
-  applicant    User              @relation(fields: [applicantId], references: [id], onDelete: Cascade)
-  status       ApplicationStatus @default(PENDING)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([internshipId, applicantId])
-}
-
 enum ApplicationStatus {
   PENDING
   APPROVED
   REJECTED
-}
-
-// Notification model
-model Notification {
-  id           String   @id @default(cuid())
-  recipientId  String
-  type         String
-  content      String
-  read         Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  
-  recipient User @relation(fields: [recipientId], references: [id], onDelete: Cascade)
-  
-  @@map("notifications")
-}
-
-// Conversation model
-model Conversation {
-  id             String   @id @default(cuid())
-  participant1Id String
-  participant2Id String
-  messages       ConversationMessage[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  
-  participant1 User @relation("Conversations1", fields: [participant1Id], references: [id], onDelete: Cascade)
-  participant2 User @relation("Conversations2", fields: [participant2Id], references: [id], onDelete: Cascade)
-  
-  @@unique([participant1Id, participant2Id])
-  @@map("conversations")
-}
-
-
-
-
-// ConversationMessage model
-model ConversationMessage {
-  id             String   @id @default(cuid())
-  conversationId String
-  senderId       String
-  content        String
-  read           Boolean  @default(false)
-  createdAt      DateTime @default(now())
-  
-  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  
-  @@map("conversation_messages")
 }
