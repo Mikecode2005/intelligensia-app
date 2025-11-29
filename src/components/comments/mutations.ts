@@ -1,3 +1,4 @@
+// components/comments/mutations.ts - IMPROVED VERSION
 import { CommentsPage } from "@/lib/types";
 import {
   InfiniteData,
@@ -10,52 +11,60 @@ import { deleteComment, submitComment } from "./actions";
 
 export function useSubmitCommentMutation(postId: string) {
   const { toast } = useToast();
-
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: submitComment,
+    mutationFn: (input: { content: string }) => 
+      submitComment({ postId, content: input.content }),
     onSuccess: async (newComment) => {
+      console.log("✅ Comment created successfully:", newComment.id);
+      
       const queryKey: QueryKey = ["comments", postId];
 
-      await queryClient.cancelQueries({ queryKey });
+      try {
+        // Update the cache optimistically
+        queryClient.setQueryData<InfiniteData<CommentsPage, string | null>>(
+          queryKey,
+          (oldData) => {
+            if (!oldData) {
+              return {
+                pageParams: [null],
+                pages: [{
+                  previousCursor: null,
+                  comments: [newComment],
+                }],
+              };
+            }
 
-      queryClient.setQueryData<InfiniteData<CommentsPage, string | null>>(
-        queryKey,
-        (oldData) => {
-          const firstPage = oldData?.pages[0];
-
-          if (firstPage) {
+            const firstPage = oldData.pages[0];
+            
             return {
               pageParams: oldData.pageParams,
               pages: [
                 {
                   previousCursor: firstPage.previousCursor,
-                  comments: [...firstPage.comments, newComment],
+                  comments: [newComment, ...firstPage.comments],
                 },
                 ...oldData.pages.slice(1),
               ],
             };
           }
-        },
-      );
+        );
 
-      queryClient.invalidateQueries({
-        queryKey,
-        predicate(query) {
-          return !query.state.data;
-        },
-      });
-
-      toast({
-        description: "Comment created",
-      });
+        toast({
+          description: "Comment created successfully!",
+        });
+      } catch (error) {
+        console.error("Error updating cache:", error);
+        // If cache update fails, invalidate the query to refetch
+        await queryClient.invalidateQueries({ queryKey });
+      }
     },
-    onError(error) {
-      console.error(error);
+    onError: (error) => {
+      console.error("❌ Comment submission error:", error);
       toast({
         variant: "destructive",
-        description: "Failed to submit comment. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to submit comment. Please try again.",
       });
     },
   });
@@ -63,42 +72,49 @@ export function useSubmitCommentMutation(postId: string) {
   return mutation;
 }
 
-export function useDeleteCommentMutation() {
+export function useDeleteCommentMutation(postId?: string) {
   const { toast } = useToast();
-
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: deleteComment,
     onSuccess: async (deletedComment) => {
-      const queryKey: QueryKey = ["comments", deletedComment.postId];
+      console.log("✅ Comment deleted successfully:", deletedComment.id);
+      
+      const actualPostId = postId || deletedComment.postId;
+      const queryKey: QueryKey = ["comments", actualPostId];
 
-      await queryClient.cancelQueries({ queryKey });
+      try {
+        // Update the cache optimistically
+        queryClient.setQueryData<InfiniteData<CommentsPage, string | null>>(
+          queryKey,
+          (oldData) => {
+            if (!oldData) return oldData;
 
-      queryClient.setQueryData<InfiniteData<CommentsPage, string | null>>(
-        queryKey,
-        (oldData) => {
-          if (!oldData) return;
+            return {
+              pageParams: oldData.pageParams,
+              pages: oldData.pages.map((page) => ({
+                previousCursor: page.previousCursor,
+                comments: page.comments.filter((c) => c.id !== deletedComment.id),
+              })),
+            };
+          }
+        );
 
-          return {
-            pageParams: oldData.pageParams,
-            pages: oldData.pages.map((page) => ({
-              previousCursor: page.previousCursor,
-              comments: page.comments.filter((c) => c.id !== deletedComment.id),
-            })),
-          };
-        },
-      );
-
-      toast({
-        description: "Comment deleted",
-      });
+        toast({
+          description: "Comment deleted successfully!",
+        });
+      } catch (error) {
+        console.error("Error updating cache:", error);
+        // If cache update fails, invalidate the query to refetch
+        await queryClient.invalidateQueries({ queryKey });
+      }
     },
-    onError(error) {
-      console.error(error);
+    onError: (error, commentId) => {
+      console.error("❌ Comment deletion error:", error);
       toast({
         variant: "destructive",
-        description: "Failed to delete comment. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to delete comment. Please try again.",
       });
     },
   });

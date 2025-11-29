@@ -1,13 +1,15 @@
+// app/layout.tsx
 import { Toaster } from "@/components/ui/toaster";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { extractRouterConfig } from "uploadthing/server";
-import { fileRouter } from "./api/uploadthing/core";
+import { ourFileRouter } from "./api/uploadthing/core"; // Updated import
 import "./globals.css";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { Providers } from "./providers";
+import { Providers } from "@/components/providers/providers";
+import PostEditorPopup from "@/components/posts/editor/PostEditorPopup"; // New import
 
 // Font configurations
 const geistSans = localFont({
@@ -52,10 +54,11 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <NextSSRPlugin routerConfig={extractRouterConfig(fileRouter)} />
+        <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         
         <Providers session={session}>
           {children}
+          <PostEditorPopup />
         </Providers>
         
         <Toaster />

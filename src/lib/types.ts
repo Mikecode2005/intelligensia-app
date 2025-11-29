@@ -1,3 +1,5 @@
+// lib/types.ts - UPDATED FOR REMIX
+// lib/types.ts - FIXED VERSION
 import { Prisma } from "@prisma/client";
 
 export function getUserDataSelect(loggedInUserId: string) {
@@ -31,10 +33,10 @@ export type UserData = Prisma.UserGetPayload<{
 
 export function getPostDataInclude(loggedInUserId: string) {
   return {
-    author: {  // Changed from 'user' to 'author'
+    // ✅ FIXED: Changed 'user' to 'author'
+    author: {
       select: getUserDataSelect(loggedInUserId),
     },
-    field: true, // Add field relation
     attachments: true,
     likes: {
       where: {
@@ -52,21 +54,32 @@ export function getPostDataInclude(loggedInUserId: string) {
         userId: true,
       },
     },
-    comments: {  // Add comments relation
+    // Add remix relationships
+    originalPost: {
       include: {
+        // ✅ FIXED: Changed 'user' to 'author'
         author: {
           select: getUserDataSelect(loggedInUserId),
         },
       },
+    },
+    remixes: {
+      include: {
+        // ✅ FIXED: Changed 'user' to 'author'
+        author: {
+          select: getUserDataSelect(loggedInUserId),
+        },
+      },
+      take: 5,
       orderBy: {
         createdAt: 'desc'
-      },
-      take: 5
+      }
     },
     _count: {
       select: {
         likes: true,
         comments: true,
+        remixes: true,
       },
     },
   } satisfies Prisma.PostInclude;
@@ -74,7 +87,10 @@ export function getPostDataInclude(loggedInUserId: string) {
 
 export type PostData = Prisma.PostGetPayload<{
   include: ReturnType<typeof getPostDataInclude>;
-}>;
+}> & {
+  isRemix?: boolean;
+  originalPostId?: string;
+};
 
 export interface PostsPage {
   posts: PostData[];
@@ -83,7 +99,8 @@ export interface PostsPage {
 
 export function getCommentDataInclude(loggedInUserId: string) {
   return {
-    author: {  // Changed from 'user' to 'author'
+    // ✅ FIXED: Changed 'user' to 'author'
+    author: {
       select: getUserDataSelect(loggedInUserId),
     },
   } satisfies Prisma.CommentInclude;
@@ -98,15 +115,22 @@ export interface CommentsPage {
   previousCursor: string | null;
 }
 
+// Update notifications to include remix type
 export const notificationsInclude = {
-  sender: {  // Changed from 'issuer' to 'sender' to match your schema
+  issuer: {
     select: {
       username: true,
       displayName: true,
       avatarUrl: true,
     },
   },
-  // Remove 'post' if you don't have this relation, or add it to your Notification model
+  post: {
+    select: {
+      content: true,
+      isRemix: true,
+      originalPostId: true,
+    },
+  },
 } satisfies Prisma.NotificationInclude;
 
 export type NotificationData = Prisma.NotificationGetPayload<{
@@ -132,10 +156,22 @@ export interface BookmarkInfo {
   isBookmarkedByUser: boolean;
 }
 
+export interface RemixInfo {
+  remixes: number;
+  isRemixedByUser?: boolean;
+}
+
 export interface NotificationCountInfo {
   unreadCount: number;
 }
 
 export interface MessageCountInfo {
   unreadCount: number;
+}
+
+// New type for remix creation
+export interface CreateRemixInput {
+  originalPostId: string;
+  content: string;
+  mediaIds?: string[];
 }

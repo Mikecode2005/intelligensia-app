@@ -43,9 +43,22 @@ export function formatNumber(num: number): string {
  * @param date Date to format
  * @returns Relative time string
  */
-export function formatRelativeDate(date: Date): string {
+export function formatRelativeDate(date: Date | string | null | undefined): string {
+  // Handle null/undefined cases
+  if (!date) {
+    return 'unknown time';
+  }
+  
+  // Convert to Date object if it's a string
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  
+  // Check if it's a valid date
+  if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) {
+    return 'unknown time';
+  }
+  
   const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  const diffInSeconds = Math.floor((now.getTime() - dateObj.getTime()) / 1000);
   
   if (diffInSeconds < 60) {
     return 'just now';
@@ -66,5 +79,10 @@ export function formatRelativeDate(date: Date): string {
     return `${diffInDays}d ago`;
   }
   
-  return date.toLocaleDateString();
+  // For older dates, return the actual date
+  return dateObj.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: diffInDays > 365 ? 'numeric' : undefined,
+  });
 }

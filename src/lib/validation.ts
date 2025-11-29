@@ -1,5 +1,5 @@
-// src/lib/validation.ts
-import { z } from "zod";
+// src/lib/validation.ts - COMPLETE FIXED VERSION
+import { z } from "zod"; // Make sure this import exists at the top
 
 /**
  * Base string validation
@@ -95,12 +95,56 @@ export const fieldSelectionSchema = z.object({
 });
 
 /**
- * Post creation schema - ADD THIS
+ * Post creation schema
  */
 export const createPostSchema = z.object({
   content: requiredString.min(1, "Content is required").max(10000, "Content too long"),
   mediaIds: z.array(z.string()).optional().default([]),
 });
+
+/**
+ * Update user profile schema
+ */
+export const updateUserProfileSchema = z.object({
+  displayName: z.string()
+    .trim()
+    .min(2, "Display name must be at least 2 characters")
+    .max(50, "Display name must be at most 50 characters")
+    .optional(),
+  username: z.string()
+    .trim()
+    .min(3, "Username must be at least 3 characters")
+    .max(30, "Username must be at most 30 characters")
+    .regex(
+      /^[a-zA-Z0-9_-]+$/,
+      "Username can only contain letters, numbers, underscores, and hyphens"
+    )
+    .optional(),
+  bio: z.string()
+    .max(500, "Bio must be at most 500 characters")
+    .optional()
+    .or(z.literal('')),
+  avatarUrl: z.string()
+    .url("Invalid URL")
+    .optional()
+    .or(z.literal(''))
+    .or(z.null()),
+  location: z.string()
+    .max(100, "Location must be at most 100 characters")
+    .optional()
+    .or(z.literal('')),
+  website: z.string()
+    .url("Invalid URL")
+    .optional()
+    .or(z.literal(''))
+    .or(z.null()),
+}).refine(
+  (data) => data.displayName || data.username || data.bio || data.avatarUrl || data.location || data.website,
+  {
+    message: "At least one field must be provided",
+    path: ["displayName"]
+  }
+);
 
 /**
  * Type exports
@@ -110,5 +154,6 @@ export type LoginValues = z.infer<typeof loginSchema>;
 export type PasswordResetRequestValues = z.infer<typeof passwordResetRequestSchema>;
 export type PasswordResetValues = z.infer<typeof passwordResetSchema>;
 export type ProfileUpdateValues = z.infer<typeof profileUpdateSchema>;
+export type UpdateUserProfileValues = z.infer<typeof updateUserProfileSchema>;
 export type FieldSelectionValues = z.infer<typeof fieldSelectionSchema>;
-export type CreatePostValues = z.infer<typeof createPostSchema>; // Add this
+export type CreatePostValues = z.infer<typeof createPostSchema>;

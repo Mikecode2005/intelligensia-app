@@ -59,10 +59,11 @@ export async function POST(
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // FIX: Changed from userId to authorId
     const post = await prisma.post.findUnique({
       where: { id: postId },
       select: {
-        userId: true,
+        authorId: true, // Changed this line
       },
     });
 
@@ -84,12 +85,13 @@ export async function POST(
         },
         update: {},
       }),
-      ...(loggedInUser.id !== post.userId
+      // FIX: Changed from userId to authorId
+      ...(loggedInUser.id !== post.authorId // Changed this line
         ? [
             prisma.notification.create({
               data: {
                 issuerId: loggedInUser.id,
-                recipientId: post.userId,
+                recipientId: post.authorId, // Changed this line
                 postId,
                 type: "LIKE",
               },
@@ -116,10 +118,11 @@ export async function DELETE(
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // FIX: Changed from userId to authorId
     const post = await prisma.post.findUnique({
       where: { id: postId },
       select: {
-        userId: true,
+        authorId: true, // Changed this line
       },
     });
 
@@ -134,10 +137,11 @@ export async function DELETE(
           postId,
         },
       }),
+      // FIX: Changed from userId to authorId
       prisma.notification.deleteMany({
         where: {
           issuerId: loggedInUser.id,
-          recipientId: post.userId,
+          recipientId: post.authorId, // Changed this line
           postId,
           type: "LIKE",
         },

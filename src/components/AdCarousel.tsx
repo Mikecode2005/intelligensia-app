@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
@@ -23,6 +23,8 @@ interface AdCarouselProps {
   className?: string;
   autoPlay?: boolean;
   autoPlayInterval?: number;
+  showNavigation?: boolean;
+  showDots?: boolean;
 }
 
 export default function AdCarousel({
@@ -30,6 +32,8 @@ export default function AdCarousel({
   className,
   autoPlay = true,
   autoPlayInterval = 5000,
+  showNavigation = true,
+  showDots = true,
 }: AdCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -38,17 +42,17 @@ export default function AdCarousel({
     return null;
   }
 
-  const nextAd = () => {
+  const nextAd = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % ads.length);
-  };
+  }, [ads.length]);
 
-  const prevAd = () => {
+  const prevAd = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + ads.length) % ads.length);
-  };
+  }, [ads.length]);
 
-  const goToAd = (index: number) => {
+  const goToAd = useCallback((index: number) => {
     setCurrentIndex(index);
-  };
+  }, []);
 
   // Auto-play functionality
   useEffect(() => {
@@ -56,12 +60,28 @@ export default function AdCarousel({
 
     const timer = setInterval(nextAd, autoPlayInterval);
     return () => clearInterval(timer);
-  }, [autoPlay, autoPlayInterval, ads.length]);
+  }, [autoPlay, autoPlayInterval, ads.length, nextAd]);
+
+  // Pause auto-play on hover
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (!autoPlay || ads.length <= 1 || isPaused) return;
+
+    const timer = setInterval(nextAd, autoPlayInterval);
+    return () => clearInterval(timer);
+  }, [autoPlay, autoPlayInterval, ads.length, nextAd, isPaused]);
 
   const currentAd = ads[currentIndex];
 
   return (
-    <Card className={cn("w-full overflow-hidden border-border", className)}>
+    <Card 
+      className={cn("w-full overflow-hidden border-border", className)}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocus={() => setIsPaused(true)}
+      onBlur={() => setIsPaused(false)}
+    >
       <CardContent className="p-0">
         <div className="relative">
           {/* Ad Image */}
@@ -71,27 +91,35 @@ export default function AdCarousel({
               alt={currentAd.title}
               fill
               className="object-cover"
-              priority
+              priority={currentIndex === 0}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            
+            {/* Loading state */}
+            <div className="absolute inset-0 flex items-center justify-center bg-muted/50">
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            </div>
           </div>
 
           {/* Navigation Arrows */}
-          {ads.length > 1 && (
+          {showNavigation && ads.length > 1 && (
             <>
               <Button
                 variant="secondary"
                 size="icon"
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 h-8 w-8 rounded-full bg-background/80 hover:bg-background"
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 h-8 w-8 rounded-full bg-background/80 hover:bg-background backdrop-blur-sm"
                 onClick={prevAd}
+                aria-label="Previous ad"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <Button
                 variant="secondary"
                 size="icon"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 rounded-full bg-background/80 hover:bg-background"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 rounded-full bg-background/80 hover:bg-background backdrop-blur-sm"
                 onClick={nextAd}
+                aria-label="Next ad"
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
@@ -102,18 +130,21 @@ export default function AdCarousel({
           <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
             <div className="flex items-start justify-between mb-2">
               <div className="flex-1">
-                <h3 className="font-semibold text-lg mb-1">{currentAd.title}</h3>
+                <h3 className="font-semibold text-lg mb-1 line-clamp-1">
+                  {currentAd.title}
+                </h3>
                 <p className="text-sm text-white/90 mb-3 line-clamp-2">
                   {currentAd.description}
                 </p>
               </div>
-              <div className="flex items-center space-x-2 ml-4">
+              <div className="flex items-center space-x-2 ml-4 flex-shrink-0">
                 <div className="relative h-8 w-8">
                   <Image
                     src={currentAd.sponsorLogo}
                     alt={currentAd.sponsorName}
                     fill
                     className="object-cover rounded"
+                    sizes="32px"
                   />
                 </div>
               </div>
@@ -125,10 +156,18 @@ export default function AdCarousel({
               </span>
               <Button
                 size="sm"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
                 asChild
               >
-                <a href={currentAd.ctaUrl} target="_blank" rel="noopener noreferrer">
+                <a 
+                  href={currentAd.ctaUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    // Track ad click if needed
+                    console.log('Ad clicked:', currentAd.id);
+                  }}
+                >
                   {currentAd.ctaText}
                   <ExternalLink className="h-3 w-3 ml-1" />
                 </a>
@@ -137,21 +176,36 @@ export default function AdCarousel({
           </div>
 
           {/* Dots Indicator */}
-          {ads.length > 1 && (
+          {showDots && ads.length > 1 && (
             <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
               {ads.map((_, index) => (
                 <button
                   key={index}
                   className={cn(
-                    "h-2 w-2 rounded-full transition-all duration-300",
+                    "h-2 w-2 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50",
                     index === currentIndex
                       ? "bg-white scale-125"
                       : "bg-white/50 hover:bg-white/70"
                   )}
                   onClick={() => goToAd(index)}
                   aria-label={`Go to ad ${index + 1}`}
+                  aria-current={index === currentIndex}
                 />
               ))}
+            </div>
+          )}
+
+          {/* Progress Bar for Auto-play */}
+          {autoPlay && ads.length > 1 && (
+            <div className="absolute top-0 left-0 right-0 h-1 bg-white/20">
+              <div 
+                className="h-full bg-white/60 transition-all duration-1000 ease-linear"
+                style={{ 
+                  width: isPaused ? '100%' : '0%',
+                  transition: isPaused ? 'none' : `width ${autoPlayInterval}ms linear`
+                }}
+                key={currentIndex} // Reset animation on ad change
+              />
             </div>
           )}
         </div>

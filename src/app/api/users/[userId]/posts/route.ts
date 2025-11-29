@@ -19,7 +19,10 @@ export async function GET(
     }
 
     const posts = await prisma.post.findMany({
-      where: { userId },
+      where: { 
+        // ✅ FIXED: Changed userId to authorId
+        authorId: userId 
+      },
       include: getPostDataInclude(user.id),
       orderBy: { createdAt: "desc" },
       take: pageSize + 1,

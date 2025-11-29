@@ -1,22 +1,26 @@
+// useMediaUpload.ts - COMPLETELY FIXED VERSION
 import { useToast } from "@/components/ui/use-toast";
 import { useUploadThing } from "@/lib/uploadthing";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 export interface Attachment {
   file: File;
-  mediaId?: string;
+  previewUrl: string;
+  url?: string; // ⭐⭐ CHANGED: Use URL instead of mediaId
+  type?: string; // ⭐⭐ ADDED: File type
   isUploading: boolean;
+  uploadProgress?: number;
 }
 
 export default function useMediaUpload() {
   const { toast } = useToast();
-
   const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
-  const [uploadProgress, setUploadProgress] = useState<number>();
-
-  const { startUpload, isUploading } = useUploadThing("attachment", {
+  const { startUpload } = useUploadThing("attachment", {
     onBeforeUploadBegin(files) {
+      console.log("🔄 Starting upload for files:", files.map(f => f.name));
+      
       const renamedFiles = files.map((file) => {
         const extension = file.name.split(".").pop();
         return new File(
@@ -28,39 +32,107 @@ export default function useMediaUpload() {
         );
       });
 
-      setAttachments((prev) => [
-        ...prev,
-        ...renamedFiles.map((file) => ({ file, isUploading: true })),
-      ]);
+      // Create preview URLs and add new attachments
+      const newAttachments: Attachment[] = renamedFiles.map((file) => ({
+        file,
+        previewUrl: URL.createObjectURL(file),
+        isUploading: true,
+        uploadProgress: 0
+      }));
 
+      setAttachments((prev) => [...prev, ...newAttachments]);
+      setIsUploading(true);
+      
+      console.log("✅ Added new attachments:", newAttachments.map(a => a.file.name));
       return renamedFiles;
     },
-    onUploadProgress: setUploadProgress,
-    onClientUploadComplete(res) {
-      setAttachments((prev) =>
-        prev.map((a) => {
-          const uploadResult = res.find((r) => r.name === a.file.name);
 
-          if (!uploadResult) return a;
-
-          return {
-            ...a,
-            mediaId: uploadResult.serverData.mediaId,
-            isUploading: false,
-          };
-        }),
+    onUploadProgress: (progress) => {
+      console.log("📊 Upload progress:", progress);
+      setAttachments(prev => 
+        prev.map(att => 
+          att.isUploading 
+            ? { ...att, uploadProgress: progress } 
+            : att
+        )
       );
     },
+
+    onClientUploadComplete(res) {
+      console.log("✅ Upload complete, response:", res);
+      
+      if (!res || res.length === 0) {
+        console.error("❌ No response from upload");
+        toast({
+          variant: "destructive",
+          description: "Upload failed - no response received",
+        });
+        setIsUploading(false);
+        return;
+      }
+
+      setAttachments((prev) =>
+        prev.map((attachment) => {
+          const uploadResult = res.find((r) => r.name === attachment.file.name);
+
+          if (!uploadResult) {
+            console.warn("❌ No upload result for:", attachment.file.name);
+            return { ...attachment, isUploading: false };
+          }
+
+          // ⭐⭐ FIXED: Use URL instead of mediaId ⭐⭐
+          const fileUrl = uploadResult.url;
+          const fileType = uploadResult.type || (attachment.file.type.startsWith('image/') ? 'image' : 'video');
+
+          console.log("📤 File:", attachment.file.name, "-> URL:", fileUrl);
+
+          if (!fileUrl) {
+            console.error("❌ No URL in response for:", attachment.file.name);
+            return { ...attachment, isUploading: false };
+          }
+
+          console.log("✅ Upload completed successfully for:", attachment.file.name);
+          return {
+            ...attachment,
+            url: fileUrl, // ⭐⭐ Store URL instead of mediaId
+            type: fileType, // ⭐⭐ Store file type
+            isUploading: false,
+            uploadProgress: 100,
+          };
+        })
+      );
+
+      setIsUploading(false);
+      
+      const successfulUploads = res.filter(r => r.url).length;
+      if (successfulUploads > 0) {
+        toast({
+          description: `Successfully uploaded ${successfulUploads} file(s)`,
+        });
+      }
+    },
+
     onUploadError(e) {
-      setAttachments((prev) => prev.filter((a) => !a.isUploading));
+      console.error("❌ Upload error:", e);
+      
+      // Clean up object URLs for failed uploads
+      setAttachments((prev) => {
+        const failedAttachments = prev.filter((a) => a.isUploading);
+        failedAttachments.forEach(att => URL.revokeObjectURL(att.previewUrl));
+        return prev.filter((a) => !a.isUploading);
+      });
+      
+      setIsUploading(false);
       toast({
         variant: "destructive",
-        description: e.message,
+        description: `Upload failed: ${e.message}`,
       });
     },
   });
 
-  function handleStartUpload(files: File[]) {
+  const handleStartUpload = useCallback((files: File[]) => {
+    console.log("🔄 handleStartUpload called with:", files.map(f => f.name));
+    
     if (isUploading) {
       toast({
         variant: "destructive",
@@ -78,23 +150,48 @@ export default function useMediaUpload() {
     }
 
     startUpload(files);
-  }
+  }, [isUploading, attachments.length, startUpload, toast]);
 
-  function removeAttachment(fileName: string) {
-    setAttachments((prev) => prev.filter((a) => a.file.name !== fileName));
-  }
+  const removeAttachment = useCallback((fileName: string) => {
+    console.log("🗑️ Removing attachment:", fileName);
+    setAttachments((prev) => {
+      const attachmentToRemove = prev.find(a => a.file.name === fileName);
+      if (attachmentToRemove?.previewUrl) {
+        URL.revokeObjectURL(attachmentToRemove.previewUrl);
+      }
+      return prev.filter((a) => a.file.name !== fileName);
+    });
+  }, []);
 
-  function reset() {
+  const reset = useCallback(() => {
+    console.log("🔄 Resetting media upload state");
+    // Clean up all object URLs
+    attachments.forEach(att => {
+      if (att.previewUrl) {
+        URL.revokeObjectURL(att.previewUrl);
+      }
+    });
     setAttachments([]);
-    setUploadProgress(undefined);
-  }
+    setIsUploading(false);
+  }, [attachments]);
+
+  // Get successfully uploaded attachments with URLs
+  const uploadedAttachments = attachments.filter(att => att.url && !att.isUploading);
+
+  // Calculate overall upload progress
+  const uploadProgress = attachments.length > 0 
+    ? attachments.reduce((sum, att) => sum + (att.uploadProgress || 0), 0) / attachments.length
+    : 0;
 
   return {
     startUpload: handleStartUpload,
     attachments,
+    uploadedAttachments, // ⭐⭐ ADDED: Filtered list of completed uploads
     isUploading,
-    uploadProgress,
+    uploadProgress: Math.round(uploadProgress),
     removeAttachment,
     reset,
   };
 }
+
+export type { Attachment };

@@ -1,3 +1,4 @@
+// lib/types.ts - UPDATED FOR REMIX
 import { Prisma } from "@prisma/client";
 
 export function getUserDataSelect(loggedInUserId: string) {
@@ -51,10 +52,30 @@ export function getPostDataInclude(loggedInUserId: string) {
         userId: true,
       },
     },
+    // Add remix relationships
+    originalPost: {
+      include: {
+        user: {
+          select: getUserDataSelect(loggedInUserId),
+        },
+      },
+    },
+    remixes: {
+      include: {
+        user: {
+          select: getUserDataSelect(loggedInUserId),
+        },
+      },
+      take: 5, // Show recent remixes
+      orderBy: {
+        createdAt: 'desc'
+      }
+    },
     _count: {
       select: {
         likes: true,
         comments: true,
+        remixes: true, // Count of how many times this post was remixed
       },
     },
   } satisfies Prisma.PostInclude;
@@ -62,7 +83,10 @@ export function getPostDataInclude(loggedInUserId: string) {
 
 export type PostData = Prisma.PostGetPayload<{
   include: ReturnType<typeof getPostDataInclude>;
-}>;
+}> & {
+  isRemix?: boolean;
+  originalPostId?: string;
+};
 
 export interface PostsPage {
   posts: PostData[];
@@ -86,6 +110,7 @@ export interface CommentsPage {
   previousCursor: string | null;
 }
 
+// Update notifications to include remix type
 export const notificationsInclude = {
   issuer: {
     select: {
@@ -97,6 +122,8 @@ export const notificationsInclude = {
   post: {
     select: {
       content: true,
+      isRemix: true,
+      originalPostId: true,
     },
   },
 } satisfies Prisma.NotificationInclude;
@@ -124,10 +151,22 @@ export interface BookmarkInfo {
   isBookmarkedByUser: boolean;
 }
 
+export interface RemixInfo {
+  remixes: number;
+  isRemixedByUser?: boolean;
+}
+
 export interface NotificationCountInfo {
   unreadCount: number;
 }
 
 export interface MessageCountInfo {
   unreadCount: number;
+}
+
+// New type for remix creation
+export interface CreateRemixInput {
+  originalPostId: string;
+  content: string;
+  mediaIds?: string[];
 }

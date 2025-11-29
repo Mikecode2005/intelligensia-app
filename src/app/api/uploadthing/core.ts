@@ -1,52 +1,56 @@
-import { validateRequest } from "@/lib/auth";
-import prisma from "@/lib/prisma";
-import { safePartialUpdateUser } from "@/lib/stream-utils";
-import { createUploadthing, FileRouter } from "uploadthing/next";
-import { UploadThingError, UTApi } from "uploadthing/server";
+// app/api/uploadthing/core.ts
+import { createUploadthing, type FileRouter } from "uploadthing/next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 const f = createUploadthing();
 
-export const fileRouter = {
-  avatar: f({
-    image: { maxFileSize: "512KB" },
-  })
-  .middleware(async () => {
-    const { user } = await validateRequest();
-    if (!user) throw new UploadThingError("Unauthorized");
-    return { user };
-  })
-  .onUploadComplete(async ({ metadata, file }) => {
-    const oldAvatarUrl = metadata.user.avatarUrl;
-
-    // Delete old avatar if exists
-    if (oldAvatarUrl) {
-      try {
-        const key = oldAvatarUrl.split(`/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`)[1];
-        if (key) {
-          await new UTApi().deleteFiles(key);
-        }
-      } catch (error) {
-        console.error('Error deleting old avatar:', error);
-      }
+export const ourFileRouter = {
+  postAttachment: f({
+    image: { 
+      maxFileSize: "4MB", 
+      maxFileCount: 5 
+    },
+    video: { 
+      maxFileSize: "16MB", 
+      maxFileCount: 1 
     }
+  })
+    .middleware(async ({ req }) => {
+      console.log("🔄 UploadThing middleware running");
+      
+      const session = await getServerSession(authOptions);
+      console.log("🔐 Session in middleware:", session ? "Authenticated" : "No session");
 
-    const newAvatarUrl = file.url.replace("/f/", `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`);
+      if (!session?.user) {
+        throw new Error("Unauthorized");
+      }
 
-    // Update database
-    await prisma.user.update({
-      where: { id: metadata.user.id },
-      data: { avatarUrl: newAvatarUrl },
-    });
+      return { 
+        userId: session.user.id 
+      };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("✅ Upload complete callback triggered!");
+      console.log("📁 File data:", {
+        name: file.name,
+        url: file.url,
+        key: file.key,
+        size: file.size,
+        type: file.type
+      });
+      console.log("👤 User ID:", metadata.userId);
 
-    // Update Stream Chat safely
-    await safePartialUpdateUser(metadata.user.id, {
-      image: newAvatarUrl,
-    });
-
-    return { avatarUrl: newAvatarUrl };
-  }),
-  
-  // ... rest of your file router
+      // Return the data that should be sent to the client
+      return {
+        name: file.name,
+        url: file.url,
+        size: file.size,
+        type: file.type,
+        key: file.key,
+        uploadedBy: metadata.userId
+      };
+    }),
 } satisfies FileRouter;
 
-export type AppFileRouter = typeof fileRouter;
+export type OurFileRouter = typeof ourFileRouter;

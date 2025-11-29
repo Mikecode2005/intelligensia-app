@@ -79,38 +79,57 @@ export default function OnboardingForm({ user }: { user: Session["user"] }) {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
+  
+  if (selectedFields.length === 0) {
+    setError("Please select at least one field of interest");
+    return;
+  }
+  
+  setError(null);
+  setIsLoading(true);
+  
+  try {
+    const formData = new FormData();
+    formData.append("fields", JSON.stringify(selectedFields));
+    formData.append("bio", bio);
+    formData.append("userType", userType);
     
-    if (selectedFields.length === 0) {
-      setError("Please select at least one field of interest");
-      return;
+    console.log("🔄 1. Submitting onboarding form...", {
+      fields: selectedFields,
+      bioLength: bio.length,
+      userType
+    });
+    
+    const result = await updateUserProfile(formData);
+    
+    console.log("📨 2. Server response:", result);
+    console.log("🔍 3. Response analysis:", {
+      hasResult: !!result,
+      hasError: result?.error,
+      hasSuccess: result?.success,
+      resultKeys: result ? Object.keys(result) : 'no result'
+    });
+    
+    if (result?.error) {
+      console.log("❌ 4. Setting error:", result.error);
+      setError(result.error);
+    } else if (result?.success) {
+      console.log("✅ 5. Success! Redirecting to dashboard...");
+      // Force redirect
+      window.location.href = "/dashboard";
+    } else {
+      console.log("⚠️  6. Unexpected response");
+      setError("Unexpected response from server");
     }
-    
-    setError(null);
-    setIsLoading(true);
-    
-    try {
-      const formData = new FormData();
-      formData.append("fields", JSON.stringify(selectedFields));
-      formData.append("bio", bio);
-      formData.append("userType", userType);
-      
-      const result = await updateUserProfile(formData);
-      
-      if (result && "error" in result) {
-        setError(result.error);
-      } else {
-        // If successful, redirect to dashboard
-        router.push("/dashboard");
-        router.refresh();
-      }
-    } catch (err) {
-      console.error("Error updating profile:", err);
-      setError("Failed to update profile. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  } catch (err) {
+    console.error("💥 7. Unexpected error:", err);
+    setError("An unexpected error occurred. Please try again.");
+  } finally {
+    console.log("🏁 8. Finally block - setting isLoading to false");
+    setIsLoading(false);
+  }
+};
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto">

@@ -39,7 +39,7 @@ export async function generateMetadata({
   const post = await getPost(postId, user.id);
 
   return {
-    title: `${post.user.displayName}: ${post.content.slice(0, 50)}...`,
+    title: `${post.author.displayName}: ${post.content.slice(0, 50)}...`,
   };
 }
 
@@ -54,7 +54,7 @@ export default async function Page({ params: { postId } }: PageProps) {
     );
   }
 
-  const post = await getPost(postId, user.id);
+  const post = await getPost(postId, user.id); // ✅ Fixed: use user.id, not author.id
 
   return (
     <main className="flex w-full min-w-0 gap-5">
@@ -63,7 +63,8 @@ export default async function Page({ params: { postId } }: PageProps) {
       </div>
       <div className="sticky top-[5.25rem] hidden h-fit w-80 flex-none lg:block">
         <Suspense fallback={<Loader2 className="mx-auto animate-spin" />}>
-          <UserInfoSidebar user={post.user} />
+          {/* ✅ Fixed: use post.author instead of post.user */}
+          <UserInfoSidebar user={post.author} />
         </Suspense>
       </div>
     </main>

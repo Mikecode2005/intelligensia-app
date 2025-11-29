@@ -1,6 +1,7 @@
+// app/api/uploadthing/route.ts
 import { createRouteHandler } from "uploadthing/next";
-import { fileRouter } from "./core";
+import { ourFileRouter } from "./core"; // Correct case: ourFileRouter not ourfileRouter
 
 export const { GET, POST } = createRouteHandler({
-  router: fileRouter,
+  router: ourFileRouter, // Correct case
 });

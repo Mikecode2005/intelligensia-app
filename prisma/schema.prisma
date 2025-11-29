@@ -46,35 +46,52 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
+// ADDED: Like model for tracking post likes
 model Like {
-  id     String @id @default(cuid())
-  userId String
-  postId String
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@unique([userId, postId])
+  @@map("likes")
 }
 
 model User {
-  id                      String                   @id @default(cuid())
-  name                    String?
-  username                String?                  @unique
-  displayName             String?
-  email                   String?                  @unique
-  emailVerified           DateTime?
-  password                String?
-  image                   String?
-  avatarUrl               String?
-  bio                     String?
-  userType                UserType                 @default(STUDENT)
-  expertise               String?
-  qualifications          String?
-  organizationType        OrganizationType?
-  location                String?
-  website                 String?
-  createdAt               DateTime                 @default(now())
-  updatedAt               DateTime                 @updatedAt
+  id               String            @id @default(cuid())
+  name             String?
+  username         String?           @unique
+  displayName      String?
+  email            String?           @unique
+  emailVerified    DateTime?
+  password         String?
+  image            String?
+  avatarUrl        String?
+  bio              String?
+  userType         UserType          @default(STUDENT)
+  streamToken      String?
+  expertise        String?
+  qualifications   String?
+  academicLevel    AcademicLevel?
+  institution      String?
+  graduationYear   Int?
+  organizationType OrganizationType?
+  location         String?
+  website          String?
+  industry         String?
+  companySize      String?
+  skills           String[]
+  currentPosition  String?
+  employmentStatus EmploymentStatus?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  // Relations
+  accounts                Account[]
+  sessions                Session[]
   classrooms              ClassroomMember[]
   comments                Comment[]
   following               Follow[]                 @relation("Follower")
@@ -84,33 +101,45 @@ model User {
   posts                   Post[]
   scholarshipApplications ScholarshipApplication[]
   studyGroups             StudyGroupMember[]
+  settings                UserSettings?
   userFields              UserField[]
-  accounts                Account[]
-  sessions                Session[]
   likes                   Like[]
-  bookmarks               Bookmark[]
   sentNotifications       Notification[]           @relation("NotificationSender")
   receivedNotifications   Notification[]           @relation("NotificationRecipient")
+  bookmarks               Bookmark[] 
+  attachments             Attachment[]             // ADD THIS LINE
+
+  // Conversation relations
+  conversation_messages      conversation_messages[]
+  conversations_participant1 conversations[]         @relation("conversations_participant1IdTousers")
+  conversations_participant2 conversations[]         @relation("conversations_participant2IdTousers")
+  work_experiences           work_experiences[]
+  ClassroomMessage           ClassroomMessage[]
+  StudyGroupMessage          StudyGroupMessage[]
 
   @@map("users")
 }
 
+// FIXED: Corrected field mapping
 model UserField {
-  fieldId String @map("A")
-  userId  String @map("B")
+  id      String @id @default(cuid())
+  userId  String
+  fieldId String
   field   Field  @relation(fields: [fieldId], references: [id], onDelete: Cascade)
   user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([fieldId, userId], map: "_UserFields_AB_pkey")
+  @@unique([userId, fieldId])
   @@map("_UserFields")
 }
 
 model Field {
-  id           String        @id @default(cuid())
-  name         String        @unique
-  description  String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
   classrooms   Classroom[]
   internships  Internship[]
   posts        Post[]
@@ -134,19 +163,56 @@ model Performance {
 }
 
 model Post {
-  id          String       @id @default(cuid())
-  content     String
-  authorId    String
-  fieldId     String?
-  likes       Like[]
-  likesCount  Int          @default(0)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id         String   @id @default(cuid())
+  content    String
+  authorId   String
+  fieldId    String?
+  likes      Like[] 
+  likesCount Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Add these for remix support
+  isRemix     Boolean @default(false)
+  originalPostId String?
+  originalPost   Post?   @relation("PostRemixes", fields: [originalPostId], references: [id])
+  remixes        Post[]  @relation("PostRemixes")
+
+  // ... rest of your relations
   comments    Comment[]
-  author      User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  field       Field?       @relation(fields: [fieldId], references: [id])
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  field       Field?    @relation(fields: [fieldId], references: [id])
   attachments Attachment[]
   bookmarks   Bookmark[]
+}
+
+
+model Attachment {
+  id        String   @id @default(cuid())
+  url       String
+  type      String // 'image', 'video', 'document', 'pdf', etc.
+  postId    String?  
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String   
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map("attachments")
+  @@index([postId])
+  @@index([userId])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@map("bookmarks")
 }
 
 model Comment {
@@ -171,34 +237,15 @@ model Follow {
   @@unique([followerId, followingId])
 }
 
-model Attachment {
-  id     String @id @default(cuid())
-  url    String
-  type   String
-  postId String
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-}
-
-model Bookmark {
-  id     String @id @default(cuid())
-  userId String
-  postId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, postId])
-}
-
+// UPDATED: Added sender relation
 model Notification {
   id          String   @id @default(cuid())
   type        String
-  message     String
+  content     String
   recipientId String
   senderId    String?
-  relatedId   String?
   read        Boolean  @default(false)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 
   recipient User  @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
   sender    User? @relation("NotificationSender", fields: [senderId], references: [id], onDelete: Cascade)
@@ -207,13 +254,15 @@ model Notification {
 }
 
 model Classroom {
-  id          String             @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   description String?
-  joinCode    String             @unique
+  joinCode    String   @unique
   fieldId     String?
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
   assignments Assignment[]
   field       Field?             @relation(fields: [fieldId], references: [id])
   members     ClassroomMember[]
@@ -263,6 +312,7 @@ model ClassroomMessage {
   classroomId String
   createdAt   DateTime  @default(now())
   classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [senderId], references: [id], onDelete: Cascade)
 }
 
 model StudyGroup {
@@ -296,6 +346,7 @@ model StudyGroupMessage {
   studyGroupId String
   createdAt    DateTime   @default(now())
   studyGroup   StudyGroup @relation(fields: [studyGroupId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [senderId], references: [id], onDelete: Cascade)
 }
 
 model Scholarship {
@@ -358,9 +409,73 @@ model InternshipApplication {
   @@unique([internshipId, applicantId])
 }
 
+// FIXED: Simplified UserSettings
+model UserSettings {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  isPrivate          Boolean  @default(false)
+  allowComments      Boolean  @default(true)
+  allowMessages      Boolean  @default(true)
+  showEmail          Boolean  @default(false)
+  showLocation       Boolean  @default(true)
+  emailNotifications Boolean  @default(true)
+  pushNotifications  Boolean  @default(true)
+  theme              String   @default("light")
+  language           String   @default("en")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// FIXED: Added proper ID defaults
+model conversation_messages {
+  id             String   @id @default(cuid())
+  conversationId String
+  senderId       String
+  content        String
+  read           Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  conversations conversations @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  users         User          @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+model conversations {
+  id             String   @id @default(cuid())
+  participant1Id String
+  participant2Id String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  conversation_messages conversation_messages[]
+  participant1          User                    @relation("conversations_participant1IdTousers", fields: [participant1Id], references: [id], onDelete: Cascade)
+  participant2          User                    @relation("conversations_participant2IdTousers", fields: [participant2Id], references: [id], onDelete: Cascade)
+
+  @@unique([participant1Id, participant2Id])
+}
+
+model work_experiences {
+  id          String    @id @default(cuid())
+  userId      String
+  company     String
+  position    String
+  description String?
+  startDate   DateTime
+  endDate     DateTime?
+  current     Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  users User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 enum UserType {
   STUDENT
+  LECTURER
   TUTOR
+  COMPANY
+  WORKER
   ORGANIZATION
 }
 
@@ -380,4 +495,20 @@ enum ApplicationStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum AcademicLevel {
+  HIGH_SCHOOL
+  UNDERGRADUATE
+  GRADUATE
+  POSTGRADUATE
+  PROFESSIONAL
+}
+
+enum EmploymentStatus {
+  FULL_TIME
+  PART_TIME
+  FREELANCE
+  UNEMPLOYED
+  STUDENT
 }

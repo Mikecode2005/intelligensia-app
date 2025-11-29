@@ -56,10 +56,15 @@ export default function EditProfileDialog({
   const [croppedAvatar, setCroppedAvatar] = useState<Blob | null>(null);
 
   async function onSubmit(values: UpdateUserProfileValues) {
+    console.log("📝 Form submitted:", values);
+    console.log("🖼️ Has cropped avatar:", !!croppedAvatar);
+
     const newAvatarFile = croppedAvatar
-      ? new File([croppedAvatar], `avatar_${user.id}.webp`)
+      ? new File([croppedAvatar], `avatar_${user.id}.webp`, { type: "image/webp" })
       : undefined;
 
+    console.log("🔄 Starting mutation...");
+    
     mutation.mutate(
       {
         values,
@@ -67,12 +72,25 @@ export default function EditProfileDialog({
       },
       {
         onSuccess: () => {
+          console.log("✅ Mutation onSuccess callback");
           setCroppedAvatar(null);
           onOpenChange(false);
+        },
+        onError: (error) => {
+          console.error("❌ Mutation onError callback:", error);
+        },
+        onSettled: () => {
+          console.log("🔚 Mutation onSettled callback");
         },
       },
     );
   }
+
+  console.log("🎯 Dialog render - mutation state:", {
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    isSuccess: mutation.isSuccess,
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

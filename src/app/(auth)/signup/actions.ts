@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { streamServerClient } from "@/lib/stream"; // Add Stream import
 import { signUpSchema } from "@/lib/validation";
 import bcrypt from "bcrypt";
 import { redirect } from "next/navigation";
@@ -57,7 +58,7 @@ export async function signUp(formData: FormData) {
     const hashedPassword = await bcrypt.hash(validatedData.password, 10);
 
     // Create user with transaction to ensure atomicity
-    await prisma.$transaction(async (tx) => {
+    const user = await prisma.$transaction(async (tx) => {
       // Create user
       const user = await tx.user.create({
         data: {
@@ -78,6 +79,15 @@ export async function signUp(formData: FormData) {
           lastActive: new Date(),
         }
       });
+
+      return user; // Return user so we can use it outside the transaction
+    });
+
+    // ✅ ADDED: Create user in Stream Chat
+    await createStreamChatUser(user.id, {
+      name: user.displayName || user.username,
+      username: user.username,
+      email: user.email,
     });
 
     // Redirect to login page
@@ -105,5 +115,34 @@ export async function signUp(formData: FormData) {
     // Log and return generic error
     console.error("Signup error:", error);
     return { error: "Something went wrong. Please try again." };
+  }
+}
+
+/**
+ * Create user in Stream Chat
+ * Uses upsertUser to create the user if they don't exist
+ */
+async function createStreamChatUser(userId: string, userData: {
+  name: string;
+  username: string;
+  email?: string;
+}) {
+  if (!streamServerClient) {
+    console.log('ℹ️ Stream Chat: Client not available during signup');
+    return;
+  }
+
+  try {
+    await streamServerClient.upsertUser({
+      id: userId,
+      name: userData.name,
+      username: userData.username,
+      email: userData.email,
+      // Add any other relevant user data
+    });
+    console.log(`✅ Stream Chat: User created successfully for ${userData.username}`);
+  } catch (error: any) {
+    console.warn('⚠️ Stream Chat: User creation failed during signup:', error.message);
+    // Don't throw - we don't want signup to fail if Stream is down
   }
 }

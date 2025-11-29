@@ -1,179 +1,142 @@
+// components/mutations.ts - FIXED VERSION
+"use client";
+
 import { useSession } from "@/app/(main)/SessionProvider";
 import { useToast } from "@/components/ui/use-toast";
 import { PostsPage } from "@/lib/types";
 import {
   InfiniteData,
-  QueryFilters,
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { submitPost } from "./actions";
+import { submitPost } from "./actions"; // FIXED IMPORT PATH
 
 export function useSubmitPostMutation() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useSession();
 
+  console.log("🔄 useSubmitPostMutation initialized");
+
   const mutation = useMutation({
-    mutationFn: submitPost,
-    onSuccess: async (newPost) => {
-      console.log("✅ Mutation successful, updating cache for post:", newPost.id);
+    mutationFn: async (input: { 
+      content: string; 
+      mediaUrls?: { url: string; type: string }[];
+    }) => {
+      console.log("🔄 Editor mutation function called with:", {
+        contentLength: input.content.length,
+        mediaUrls: input.mediaUrls?.length || 0,
+        user: user?.name
+      });
+
+      if (!user) {
+        throw new Error("You must be logged in to create a post");
+      }
 
       try {
-        // Method 1: Simple invalidation (most reliable)
+        // Submit post with URLs (your action already handles creating post + linking media)
+        const result = await submitPost({
+          content: input.content,
+          mediaUrls: input.mediaUrls && input.mediaUrls.length > 0 ? input.mediaUrls : undefined
+        });
+        
+        console.log("✅ submitPost returned:", result);
+        return result;
+      } catch (error) {
+        console.error("❌ submitPost failed:", error);
+        throw error; // Re-throw to let React Query handle it
+      }
+    },
+    onMutate: (variables) => {
+      console.log("🔄 Mutation starting:", variables);
+      // Return context for potential rollback
+      return { timestamp: Date.now() };
+    },
+    onSuccess: async (newPost, variables, context) => {
+      console.log("✅ Editor mutation successful, updating cache for post:", newPost?.id);
+      console.log("📊 Mutation context:", context);
+
+      if (!newPost) {
+        console.error("❌ No post returned from editor mutation");
+        toast({
+          variant: "destructive", 
+          description: "Post created but failed to load",
+        });
+        return;
+      }
+
+      try {
+        // Optimistically add the new post to the feed
+        queryClient.setQueryData<InfiniteData<PostsPage>>(
+          ["post-feed"],
+          (oldData) => {
+            console.log("🔄 Updating cache with new post");
+            
+            if (!oldData) {
+              console.log("📝 No existing cache, creating new structure");
+              return {
+                pages: [{
+                  posts: [newPost],
+                  nextCursor: null
+                }],
+                pageParams: [null]
+              };
+            }
+
+            // Add the new post to the first page
+            const updatedPages = oldData.pages.map((page, index) => {
+              if (index === 0) {
+                console.log(`📝 Adding post to page ${index}`);
+                return {
+                  ...page,
+                  posts: [newPost, ...page.posts]
+                };
+              }
+              return page;
+            });
+
+            console.log("✅ Cache updated successfully");
+            return {
+              ...oldData,
+              pages: updatedPages
+            };
+          }
+        );
+
+        console.log("✅ Cache updated with new post");
+
+        toast({
+          description: "Post created successfully!",
+        });
+      } catch (error) {
+        console.error("❌ Error updating cache in editor:", error);
+        // Fallback: invalidate and refetch
         await queryClient.invalidateQueries({ 
           queryKey: ["post-feed"] 
         });
-
-        // Method 2: More targeted optimistic update (if you want to keep it)
-        updateCacheOptimistically(queryClient, user.id, newPost);
-
-        toast({
-          description: "Post created successfully",
-        });
-      } catch (error) {
-        console.error("Error updating cache:", error);
-        // Fallback: invalidate everything related to posts
-        await queryClient.invalidateQueries({ 
-          predicate: (query) => 
-            query.queryKey.some(key => 
-              typeof key === 'string' && key.includes('post')
-            )
-        });
+        console.log("🔄 Cache invalidated as fallback");
       }
     },
-    onError(error) {
-      console.error("Mutation error:", error);
+    onError: (error, variables, context) => {
+      console.error("❌ Editor mutation error:", {
+        error: error instanceof Error ? error.message : error,
+        variables,
+        context
+      });
+      
       toast({
         variant: "destructive",
         description: error instanceof Error ? error.message : "Failed to post. Please try again.",
       });
     },
-    // Add optimistic updates for better UX
-    onMutate: async (variables) => {
-      console.log("🔄 Starting optimistic update for:", variables.content);
-      
-      // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['post-feed'] });
-
-      // Snapshot the previous value
-      const previousPosts = queryClient.getQueryData(['post-feed']);
-
-      // Optimistically add to cache
-      queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(
-        { queryKey: ['post-feed'] },
-        (oldData) => {
-          if (!oldData?.pages[0]) {
-            // Create initial structure if it doesn't exist
-            return {
-              pageParams: [null],
-              pages: [{
-                posts: [{
-                  ...variables,
-                  id: 'optimistic-' + Date.now(),
-                  author: user,
-                  authorId: user.id,
-                  createdAt: new Date(),
-                  likes: [],
-                  likesCount: 0,
-                  comments: [],
-                  attachments: [],
-                  bookmarks: [],
-                  _count: { likes: 0, comments: 0 }
-                }],
-                nextCursor: null,
-              }]
-            };
-          }
-
-          const firstPage = oldData.pages[0];
-          return {
-            ...oldData,
-            pages: [
-              {
-                ...firstPage,
-                posts: [
-                  {
-                    ...variables,
-                    id: 'optimistic-' + Date.now(),
-                    author: user,
-                    authorId: user.id,
-                    createdAt: new Date(),
-                    likes: [],
-                    likesCount: 0,
-                    comments: [],
-                    attachments: [],
-                    bookmarks: [],
-                    _count: { likes: 0, comments: 0 }
-                  },
-                  ...firstPage.posts,
-                ],
-              },
-              ...oldData.pages.slice(1),
-            ],
-          };
-        }
-      );
-
-      return { previousPosts };
-    },
-    onSettled: () => {
-      // Always refetch after error or success to ensure consistency
-      queryClient.invalidateQueries({ queryKey: ['post-feed'] });
+    onSettled: (data, error, variables, context) => {
+      console.log("🏁 Mutation settled:", {
+        hasData: !!data,
+        hasError: !!error,
+        context
+      });
     },
   });
 
   return mutation;
-}
-
-// Helper function for optimistic cache updates
-function updateCacheOptimistically(
-  queryClient: any, 
-  userId: string, 
-  newPost: any
-) {
-  try {
-    const queryFilter = {
-      queryKey: ["post-feed"],
-    };
-
-    queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(
-      queryFilter,
-      (oldData) => {
-        if (!oldData?.pages?.length) {
-          console.log("No existing data, creating new cache structure");
-          return {
-            pageParams: [null],
-            pages: [{
-              posts: [newPost],
-              nextCursor: null,
-            }]
-          };
-        }
-
-        console.log("Updating existing cache with new post");
-        const firstPage = oldData.pages[0];
-        
-        // Check if post already exists to avoid duplicates
-        const postExists = firstPage.posts.some(post => post.id === newPost.id);
-        if (postExists) {
-          console.log("Post already exists in cache, skipping");
-          return oldData;
-        }
-
-        return {
-          ...oldData,
-          pages: [
-            {
-              ...firstPage,
-              posts: [newPost, ...firstPage.posts],
-            },
-            ...oldData.pages.slice(1),
-          ],
-        };
-      }
-    );
-  } catch (error) {
-    console.error("Error in optimistic cache update:", error);
-  }
 }
