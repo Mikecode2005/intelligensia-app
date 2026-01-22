@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Account {
-  id                String  @id @default(cuid())
+  id                String  @id @default(uuid())
   userId            String
   type              String
   provider          String
@@ -21,18 +21,20 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
@@ -46,9 +48,8 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
-// ADDED: Like model for tracking post likes
 model Like {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   userId    String
   postId    String
   createdAt DateTime @default(now())
@@ -61,17 +62,18 @@ model Like {
 }
 
 model User {
-  id               String            @id @default(cuid())
+  id               String   @id @default(uuid())
   name             String?
-  username         String?           @unique
+  username         String?  @unique
   displayName      String?
-  email            String?           @unique
+  email            String?  @unique
   emailVerified    DateTime?
   password         String?
   image            String?
   avatarUrl        String?
-  bio              String?
-  userType         UserType          @default(STUDENT)
+  bio              String?  @db.Text
+
+  userType         UserType @default(STUDENT)
   streamToken      String?
   expertise        String?
   qualifications   String?
@@ -86,16 +88,16 @@ model User {
   skills           String[]
   currentPosition  String?
   employmentStatus EmploymentStatus?
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
 
-  // Relations
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   accounts                Account[]
   sessions                Session[]
   classrooms              ClassroomMember[]
   comments                Comment[]
-  following               Follow[]                 @relation("Follower")
-  followers               Follow[]                 @relation("Following")
+  following               Follow[] @relation("Follower")
+  followers               Follow[] @relation("Following")
   internshipApplications  InternshipApplication[]
   performance             Performance?
   posts                   Post[]
@@ -104,15 +106,14 @@ model User {
   settings                UserSettings?
   userFields              UserField[]
   likes                   Like[]
-  sentNotifications       Notification[]           @relation("NotificationSender")
-  receivedNotifications   Notification[]           @relation("NotificationRecipient")
-  bookmarks               Bookmark[] 
-  attachments             Attachment[]             // ADD THIS LINE
+  sentNotifications       Notification[] @relation("NotificationSender")
+  receivedNotifications   Notification[] @relation("NotificationRecipient")
+  bookmarks               Bookmark[]
+  attachments             Attachment[]
 
-  // Conversation relations
   conversation_messages      conversation_messages[]
-  conversations_participant1 conversations[]         @relation("conversations_participant1IdTousers")
-  conversations_participant2 conversations[]         @relation("conversations_participant2IdTousers")
+  conversations_participant1 conversations[] @relation("conversations_participant1IdTousers")
+  conversations_participant2 conversations[] @relation("conversations_participant2IdTousers")
   work_experiences           work_experiences[]
   ClassroomMessage           ClassroomMessage[]
   StudyGroupMessage          StudyGroupMessage[]
@@ -120,26 +121,25 @@ model User {
   @@map("users")
 }
 
-// FIXED: Corrected field mapping
 model UserField {
-  id      String @id @default(cuid())
+  id      String @id @default(uuid())
   userId  String
   fieldId String
-  field   Field  @relation(fields: [fieldId], references: [id], onDelete: Cascade)
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  field Field @relation(fields: [fieldId], references: [id], onDelete: Cascade)
 
   @@unique([userId, fieldId])
   @@map("_UserFields")
 }
 
 model Field {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   name        String   @unique
-  description String?
+  description String?  @db.Text
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  // Relations
   classrooms   Classroom[]
   internships  Internship[]
   posts        Post[]
@@ -149,61 +149,63 @@ model Field {
 }
 
 model Performance {
-  id                   String    @id @default(cuid())
-  userId               String    @unique
-  studyHours           Float     @default(0)
-  completedAssignments Int       @default(0)
-  totalAssignments     Int       @default(0)
+  id                   String   @id @default(uuid())
+  userId               String   @unique
+  studyHours           Float    @default(0)
+  completedAssignments Int      @default(0)
+  totalAssignments     Int      @default(0)
   averageGrade         Float?
   lastActive           DateTime?
-  loginStreak          Int       @default(0)
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
-  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  loginStreak          Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Post {
-  id         String   @id @default(cuid())
-  content    String
-  authorId   String
-  fieldId    String?
-  likes      Like[] 
-  likesCount Int      @default(0)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(uuid())
+  content   String   @db.Text
+  authorId  String
+  fieldId   String?
 
-  // Add these for remix support
-  isRemix     Boolean @default(false)
+  likes      Like[]
+  likesCount Int @default(0)
+
+  isRemix        Boolean @default(false)
   originalPostId String?
   originalPost   Post?   @relation("PostRemixes", fields: [originalPostId], references: [id])
   remixes        Post[]  @relation("PostRemixes")
 
-  // ... rest of your relations
-  comments    Comment[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   field       Field?    @relation(fields: [fieldId], references: [id])
+  comments    Comment[]
   attachments Attachment[]
   bookmarks   Bookmark[]
 }
 
-
 model Attachment {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   url       String
-  type      String // 'image', 'video', 'document', 'pdf', etc.
-  postId    String?  
-  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
-  userId    String   
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  postId    String?
+  userId    String
   createdAt DateTime @default(now())
 
-  @@map("attachments")
+  post Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([postId])
   @@index([userId])
+  @@map("attachments")
 }
 
 model Bookmark {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   userId    String
   postId    String
   createdAt DateTime @default(now())
@@ -216,32 +218,33 @@ model Bookmark {
 }
 
 model Comment {
-  id        String   @id @default(cuid())
-  content   String
+  id        String   @id @default(uuid())
+  content   String   @db.Text
   authorId  String
   postId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Follow {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   followerId  String
   followingId String
   createdAt   DateTime @default(now())
-  follower    User     @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
-  following   User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  follower  User @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@unique([followerId, followingId])
 }
 
-// UPDATED: Added sender relation
 model Notification {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   type        String
-  content     String
+  content     String   @db.Text
   recipientId String
   senderId    String?
   read        Boolean  @default(false)
@@ -252,6 +255,7 @@ model Notification {
 
   @@map("notifications")
 }
+
 
 model Classroom {
   id          String   @id @default(cuid())
