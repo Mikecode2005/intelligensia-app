@@ -235,3 +235,8 @@ body {
 .str-chat__channel-search-bar-button--exit-search {
   display: none;
 }
+
+/* Dashboard specific styles */
+.intellibar-item {
+  @apply flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 border border-orange-100 rounded-full;
+}
