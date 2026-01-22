@@ -43,12 +43,18 @@ const passwordSchema = requiredString
   );
 
 /**
+ * User type enum
+ */
+const userTypeSchema = z.enum(["student", "lecturer", "organizational", "school", "individual"]);
+
+/**
  * Sign up form schema
  */
 export const signUpSchema = z.object({
   username: usernameSchema,
   email: emailSchema,
   password: passwordSchema,
+  userType: userTypeSchema,
 });
 
 /**

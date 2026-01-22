@@ -1,7 +1,6 @@
 "use client";
 
 import { useForm, Controller } from "react-hook-form";
-import Logo from "@/assets/Intelligwntia.png"; 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import {
@@ -32,6 +31,7 @@ export default function SignUpForm() {
       email: "",
       username: "",
       password: "",
+      userType: undefined,
     },
   });
 
@@ -44,7 +44,8 @@ export default function SignUpForm() {
       formData.append("email", values.email);
       formData.append("username", values.username);
       formData.append("password", values.password);
-      
+      formData.append("userType", values.userType || "");
+
       const result = await signUp(formData);
       
       if (result?.error) {
@@ -72,8 +73,8 @@ export default function SignUpForm() {
       {/* Logo Section */}
       <div className="flex justify-center mb-6">
         <div className="relative w-40 h-16">
-          <Image 
-            src={Logo}
+          <Image
+            src="/logo.png"
             alt="Intelligensia Logo"
             fill
             className="object-contain"
@@ -126,6 +127,32 @@ export default function SignUpForm() {
                     className="focus:ring-2 focus:ring-orange-500 border-orange-200 dark:border-orange-800 dark:bg-neutral-800"
                     {...field}
                   />
+                </FormControl>
+                <FormMessage className="text-red-500 text-xs" />
+              </FormItem>
+            )}
+          />
+
+          <Controller
+            name="userType"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-neutral-700 dark:text-neutral-300">
+                  Account Type
+                </FormLabel>
+                <FormControl>
+                  <select
+                    {...field}
+                    className="w-full px-3 py-2 border border-orange-200 dark:border-orange-800 rounded-lg bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  >
+                    <option value="">Select your account type</option>
+                    <option value="student">Student</option>
+                    <option value="lecturer">Lecturer</option>
+                    <option value="organizational">Organizational</option>
+                    <option value="school">School</option>
+                    <option value="individual">Individual</option>
+                  </select>
                 </FormControl>
                 <FormMessage className="text-red-500 text-xs" />
               </FormItem>

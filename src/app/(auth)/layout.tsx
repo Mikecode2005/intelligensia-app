@@ -1,5 +1,5 @@
 // src/app/(main)/layout.tsx
-import validateRequest from "@/lib/auth";
+import { validateRequest } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function MainLayout({

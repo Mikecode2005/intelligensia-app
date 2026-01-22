@@ -1,36 +1,30 @@
 import { Metadata } from "next";
-import signupImage from "@/assets/signup-image.jpg";
-import Link from "next/link";
-import Image from "next/image";
 import SignUpForm from "./SignUpForm";
+import FloatingWords from "@/components/FloatingWords";
 
 export const metadata: Metadata =  {
     title: "sign up"
 }
 
 export default function page() {
-    
+
     return (
-      <main className="flex h-screen items-center justify-center p-5">
-       <div className="shadow-2xl flex h-full max-h-[40rem] w-full max-w-[64rem] rounded-2xl overflow-hidden bg-card">
-         <div className="md:w-1/2 space-y-10 overflow-y-auto p-10">
+      <main className="relative flex h-screen items-center justify-center p-5 bg-gradient-to-br from-gray-50 to-orange-50 dark:from-gray-900 dark:to-gray-800 overflow-hidden">
+        <FloatingWords />
+        <div className="relative z-10 flex items-center justify-center w-full max-w-md">
+          <div className="space-y-6 w-full">
             <div className="space-y-1 text-center">
-                <h1 className="text-3x1 font-bold">Sign Up to intelligensia</h1>
+                <h1 className="text-3xl font-bold text-orange-600 dark:text-orange-500">Sign Up to Intelligensia</h1>
                 <p className="text-muted-foreground">
-                    A place to connect with student all over the world
+                    A place to connect with students all over the world
                 </p>
             </div>
             <div className="space-y-5">
                 <SignUpForm />
-                
+
             </div>
-         </div>
-         <Image
-         src= {signupImage}
-         alt=""
-         className="w-1/2 hidden md:block object-cover"
-         />
-       </div>
+          </div>
+        </div>
     </main>
     );
 }

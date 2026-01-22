@@ -1,6 +1,6 @@
 "use client";
 import { useForm, Controller } from "react-hook-form";
-import Logo from "@/assets/Intelligwntia.png";
+import Logo from "/logo.png";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import {
@@ -65,13 +65,12 @@ export default function LoginForm() {
       {/* Logo Section */}
       <div className="flex justify-center mb-6">
         <div className="relative w-40 h-16">
-          <Image 
-            src={Logo}
-            alt="Intelligensia Logo"
-            fill
-            className="object-contain"
-            priority
-          />
+            <Image
+                      src="/logo.png"
+                      alt="Intelligensia Logo"
+                      fill
+                      className="object-contain"
+                    />
         </div>
       </div>
 

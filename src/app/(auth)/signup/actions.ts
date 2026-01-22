@@ -18,12 +18,14 @@ export async function signUp(formData: FormData) {
     const email = formData.get("email") as string;
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
-    
+    const userType = formData.get("userType") as string;
+
     // Validate input
     const validatedData = signUpSchema.parse({
       email,
       username,
       password,
+      userType,
     });
 
     // Check if username already exists
@@ -57,6 +59,17 @@ export async function signUp(formData: FormData) {
     // Hash password
     const hashedPassword = await bcrypt.hash(validatedData.password, 10);
 
+    // Map form userType to database enum
+    const userTypeMapping: Record<string, string> = {
+      student: "STUDENT",
+      lecturer: "LECTURER",
+      organizational: "ORGANIZATION",
+      school: "ORGANIZATION", // Map school to ORGANIZATION
+      individual: "WORKER", // Map individual to WORKER
+    };
+
+    const dbUserType = userTypeMapping[validatedData.userType] || "STUDENT";
+
     // Create user with transaction to ensure atomicity
     const user = await prisma.$transaction(async (tx) => {
       // Create user
@@ -67,7 +80,7 @@ export async function signUp(formData: FormData) {
           displayName: validatedData.username,
           email: validatedData.email,
           password: hashedPassword,
-          userType: "STUDENT",
+          userType: dbUserType as any, // Cast to any to avoid enum type issues
         },
       });
       

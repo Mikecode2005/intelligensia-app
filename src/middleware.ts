@@ -56,6 +56,9 @@ function isPublicPath(pathname: string) {
     "/assets",
   ];
   
+  // Note: /onboarding is NOT public - it requires authentication
+  // The dashboard will handle the redirect for unonboarded users
+  
   return publicPaths.some(path => pathname.startsWith(path));
 }
 
