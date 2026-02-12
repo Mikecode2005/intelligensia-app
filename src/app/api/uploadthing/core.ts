@@ -54,3 +54,5 @@ export const ourFileRouter = {
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;
+// Backwards-compatible export for other modules expecting `AppFileRouter`
+export type AppFileRouter = typeof ourFileRouter;

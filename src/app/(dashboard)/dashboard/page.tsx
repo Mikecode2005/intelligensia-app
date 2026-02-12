@@ -44,6 +44,12 @@ export default async function DashboardPage() {
   
   // Extract the actual field objects from the join table
   const fields = userWithFields.userFields.map(uf => uf.field);
+
+  // Redirect users to role-specific dashboard pages
+  if (user.userType) {
+    const rolePath = user.userType.toLowerCase();
+    redirect(`/dashboard/roles/${rolePath}`);
+  }
   
   return (
     <main className="container mx-auto px-4 py-8">

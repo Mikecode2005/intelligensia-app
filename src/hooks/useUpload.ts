@@ -4,7 +4,7 @@ import { useState } from "react";
 export function useUpload() {
   const [isUploading, setIsUploading] = useState(false);
   
-  const { startUpload } = useUploadThing("attachment", {
+  const { startUpload } = useUploadThing("postAttachment", {
     onClientUploadComplete: (data) => {
       console.log("✅ Upload completed:", data);
       setIsUploading(false);
