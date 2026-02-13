@@ -1,215 +1,153 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
-import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export interface Ad {
-  id: string;
-  imageUrl: string;
-  title: string;
-  description: string;
-  ctaText: string;
-  ctaUrl: string;
-  sponsorName: string;
-  sponsorLogo: string;
-}
+export default function AdCarousel() {
+  const [current, setCurrent] = useState(0);
+  const [autoPlay, setAutoPlay] = useState(true);
 
-interface AdCarouselProps {
-  ads: Ad[];
-  className?: string;
-  autoPlay?: boolean;
-  autoPlayInterval?: number;
-  showNavigation?: boolean;
-  showDots?: boolean;
-}
-
-export default function AdCarousel({
-  ads,
-  className,
-  autoPlay = true,
-  autoPlayInterval = 5000,
-  showNavigation = true,
-  showDots = true,
-}: AdCarouselProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  // If there are no ads, don't render anything
-  if (!ads || ads.length === 0) {
-    return null;
-  }
-
-  const nextAd = useCallback(() => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % ads.length);
-  }, [ads.length]);
-
-  const prevAd = useCallback(() => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + ads.length) % ads.length);
-  }, [ads.length]);
-
-  const goToAd = useCallback((index: number) => {
-    setCurrentIndex(index);
-  }, []);
-
-  // Auto-play functionality
-  useEffect(() => {
-    if (!autoPlay || ads.length <= 1) return;
-
-    const timer = setInterval(nextAd, autoPlayInterval);
-    return () => clearInterval(timer);
-  }, [autoPlay, autoPlayInterval, ads.length, nextAd]);
-
-  // Pause auto-play on hover
-  const [isPaused, setIsPaused] = useState(false);
+  const ads = [
+    {
+      id: 1,
+      title: "Advanced Research Tools for Teams",
+      description: "Scale your academic throughput with our cloud-integrated lab management system.",
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBjHkUB4-UUpovC8AJ1PNbXk9fsecPlm9rd_CdDH924B-iDM55ELoyYgWLGbLjup1_F7XJzKy72O9mtUmIBrI8VZkXuA5raxkIHsmkkBMa66EIk47pu-TUhmv4xRPgvtlXAYbFS6pKz1ZSnMeuAbhZZd_2gtRP-KpgCO_pWLD66_-OLCNAx4mqKFy8-JTYD_jzGLML1YMc5117uht_x92xn0Hoe9lumzXlD5oQlpXqR96zHK5SnHgARtaSSBc4Wxln-McD2oAUGi0k",
+      cta: "Get Early Access"
+    },
+    {
+      id: 2,
+      title: "Collaborative Study Platform",
+      description: "Connect with peers, share resources, and ace your exams together.",
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBjHkUB4-UUpovC8AJ1PNbXk9fsecPlm9rd_CdDH924B-iDM55ELoyYgWLGbLjup1_F7XJzKy72O9mtUmIBrI8VZkXuA5raxkIHsmkkBMa66EIk47pu-TUhmv4xRPgvtlXAYbFS6pKz1ZSnMeuAbhZZd_2gtRP-KpgCO_pWLD66_-OLCNAx4mqKFy8-JTYD_jzGLML1YMc5117uht_x92xn0Hoe9lumzXlD5oQlpXqR96zHK5SnHgARtaSSBc4Wxln-McD2oAUGi0k",
+      cta: "Learn More"
+    },
+    {
+      id: 3,
+      title: "Premium Academic Resources",
+      description: "Access curated notes, exam prep materials, and expert tutoring.",
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBjHkUB4-UUpovC8AJ1PNbXk9fsecPlm9rd_CdDH924B-iDM55ELoyYgWLGbLjup1_F7XJzKy72O9mtUmIBrI8VZkXuA5raxkIHsmkkBMa66EIk47pu-TUhmv4xRPgvtlXAYbFS6pKz1ZSnMeuAbhZZd_2gtRP-KpgCO_pWLD66_-OLCNAx4mqKFy8-JTYD_jzGLML1YMc5117uht_x92xn0Hoe9lumzXlD5oQlpXqR96zHK5SnHgARtaSSBc4Wxln-McD2oAUGi0k",
+      cta: "Upgrade Now"
+    },
+  ];
 
   useEffect(() => {
-    if (!autoPlay || ads.length <= 1 || isPaused) return;
-
-    const timer = setInterval(nextAd, autoPlayInterval);
+    if (!autoPlay) return;
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % ads.length);
+    }, 5000);
     return () => clearInterval(timer);
-  }, [autoPlay, autoPlayInterval, ads.length, nextAd, isPaused]);
+  }, [autoPlay, ads.length]);
 
-  const currentAd = ads[currentIndex];
+  const nextSlide = () => {
+    setCurrent((prev) => (prev + 1) % ads.length);
+    setAutoPlay(false);
+  };
+
+  const prevSlide = () => {
+    setCurrent((prev) => (prev - 1 + ads.length) % ads.length);
+    setAutoPlay(false);
+  };
 
   return (
-    <Card 
-      className={cn("w-full overflow-hidden border-border", className)}
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onFocus={() => setIsPaused(true)}
-      onBlur={() => setIsPaused(false)}
-    >
-      <CardContent className="p-0">
-        <div className="relative">
-          {/* Ad Image */}
-          <div className="relative h-48 md:h-64 w-full">
-            <Image
-              src={currentAd.imageUrl}
-              alt={currentAd.title}
-              fill
-              className="object-cover"
-              priority={currentIndex === 0}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            
-            {/* Loading state */}
-            <div className="absolute inset-0 flex items-center justify-center bg-muted/50">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-            </div>
-          </div>
+    <div className="bg-[#121212] rounded-xl border border-[#FF6B00]/20 overflow-hidden relative group">
+      {/* Sponsored Badge */}
+      <div className="absolute top-4 right-4 z-10">
+        <span className="bg-black/60 text-[#FF6B00] text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest border border-[#FF6B00]/20 backdrop-blur-sm">
+          Sponsored
+        </span>
+      </div>
 
-          {/* Navigation Arrows */}
-          {showNavigation && ads.length > 1 && (
-            <>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 h-8 w-8 rounded-full bg-background/80 hover:bg-background backdrop-blur-sm"
-                onClick={prevAd}
-                aria-label="Previous ad"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 rounded-full bg-background/80 hover:bg-background backdrop-blur-sm"
-                onClick={nextAd}
-                aria-label="Next ad"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </>
-          )}
+      {/* Carousel Container */}
+      <div className="flex items-center">
+        {/* Left Navigation Button */}
+        <motion.button
+          onClick={prevSlide}
+          className="absolute left-2 z-10 size-8 bg-black/50 rounded-full flex items-center justify-center text-white hover:text-[#FF6B00] hover:bg-black/80 transition-all"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onMouseEnter={() => setAutoPlay(false)}
+          onMouseLeave={() => setAutoPlay(true)}
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </motion.button>
 
-          {/* Ad Content */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-            <div className="flex items-start justify-between mb-2">
-              <div className="flex-1">
-                <h3 className="font-semibold text-lg mb-1 line-clamp-1">
-                  {currentAd.title}
-                </h3>
-                <p className="text-sm text-white/90 mb-3 line-clamp-2">
-                  {currentAd.description}
-                </p>
-              </div>
-              <div className="flex items-center space-x-2 ml-4 flex-shrink-0">
-                <div className="relative h-8 w-8">
-                  <Image
-                    src={currentAd.sponsorLogo}
-                    alt={currentAd.sponsorName}
-                    fill
-                    className="object-cover rounded"
-                    sizes="32px"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-white/80">
-                Sponsored by {currentAd.sponsorName}
-              </span>
-              <Button
-                size="sm"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
-                asChild
-              >
-                <a 
-                  href={currentAd.ctaUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  onClick={(e) => {
-                    // Track ad click if needed
-                    console.log('Ad clicked:', currentAd.id);
-                  }}
+        {/* Slides */}
+        <div className="flex-1 relative">
+          <div className="relative h-64 w-full">
+            <div className="absolute inset-0 flex">
+              {ads.map((ad, index) => (
+                <motion.div
+                  key={ad.id}
+                  className="absolute inset-0 flex"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: index === current ? 1 : 0 }}
+                  transition={{ duration: 0.5 }}
+                  style={{ pointerEvents: index === current ? "auto" : "none" }}
                 >
-                  {currentAd.ctaText}
-                  <ExternalLink className="h-3 w-3 ml-1" />
-                </a>
-              </Button>
-            </div>
-          </div>
+                  {/* Image Section */}
+                  <div
+                    className="w-1/2 h-full bg-cover bg-center"
+                    style={{ backgroundImage: `url("${ad.image}")` }}
+                  >
+                    <div className="w-full h-full bg-gradient-to-r from-transparent to-[#121212]" />
+                  </div>
 
-          {/* Dots Indicator */}
-          {showDots && ads.length > 1 && (
-            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
-              {ads.map((_, index) => (
-                <button
-                  key={index}
-                  className={cn(
-                    "h-2 w-2 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50",
-                    index === currentIndex
-                      ? "bg-white scale-125"
-                      : "bg-white/50 hover:bg-white/70"
-                  )}
-                  onClick={() => goToAd(index)}
-                  aria-label={`Go to ad ${index + 1}`}
-                  aria-current={index === currentIndex}
-                />
+                  {/* Content Section */}
+                  <div className="w-1/2 p-8 flex flex-col justify-center gap-4">
+                    <h4 className="text-xl font-bold text-white leading-tight">
+                      {ad.title}
+                    </h4>
+                    <p className="text-sm text-neutral-400">{ad.description}</p>
+                    <motion.button
+                      className="bg-[#FF6B00] text-black w-fit px-6 py-2 rounded-lg text-sm font-bold hover:bg-[#E66000] transition-all"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onMouseEnter={() => setAutoPlay(false)}
+                      onMouseLeave={() => setAutoPlay(true)}
+                    >
+                      {ad.cta}
+                    </motion.button>
+                  </div>
+                </motion.div>
               ))}
             </div>
-          )}
-
-          {/* Progress Bar for Auto-play */}
-          {autoPlay && ads.length > 1 && (
-            <div className="absolute top-0 left-0 right-0 h-1 bg-white/20">
-              <div 
-                className="h-full bg-white/60 transition-all duration-1000 ease-linear"
-                style={{ 
-                  width: isPaused ? '100%' : '0%',
-                  transition: isPaused ? 'none' : `width ${autoPlayInterval}ms linear`
-                }}
-                key={currentIndex} // Reset animation on ad change
-              />
-            </div>
-          )}
+          </div>
         </div>
-      </CardContent>
-    </Card>
+
+        {/* Right Navigation Button */}
+        <motion.button
+          onClick={nextSlide}
+          className="absolute right-2 z-10 size-8 bg-black/50 rounded-full flex items-center justify-center text-white hover:text-[#FF6B00] hover:bg-black/80 transition-all"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onMouseEnter={() => setAutoPlay(false)}
+          onMouseLeave={() => setAutoPlay(true)}
+        >
+          <ChevronRight className="h-5 w-5" />
+        </motion.button>
+      </div>
+
+      {/* Carousel Indicators */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        {ads.map((_, index) => (
+          <motion.button
+            key={index}
+            onClick={() => {
+              setCurrent(index);
+              setAutoPlay(false);
+            }}
+            className={`size-1.5 rounded-full transition-all ${
+              index === current
+                ? "bg-[#FF6B00]"
+                : "bg-neutral-700 hover:bg-neutral-500 cursor-pointer"
+            }`}
+            whileHover={{ scale: 1.2 }}
+            onMouseLeave={() => setAutoPlay(true)}
+          />
+        ))}
+      </div>
+    </div>
   );
 }

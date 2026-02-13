@@ -2,6 +2,7 @@
 
 import { SessionProvider as NextAuthSessionProvider, useSession as useNextAuthSession } from "next-auth/react";
 import { ReactNode, createContext, useContext } from "react";
+import { Session } from "next-auth";
 
 interface SessionContextType {
   user: {
@@ -10,6 +11,7 @@ interface SessionContextType {
     email: string;
     username: string;
     userType: string;
+    avatarUrl: string | null;
   } | null;
   session: {
     id: string;
@@ -23,7 +25,7 @@ const SessionContext = createContext<SessionContextType | undefined>(undefined);
 // Provider component
 interface SessionProviderProps {
   children: ReactNode;
-  session: any; // NextAuth session object
+  session: Session | null;
 }
 
 export default function SessionProvider({ children, session }: SessionProviderProps) {
@@ -48,6 +50,7 @@ function SessionContextWrapper({ children }: { children: ReactNode }) {
       email: nextAuthSession.user?.email || '',
       username: nextAuthSession.user?.username || nextAuthSession.user?.name || '',
       userType: nextAuthSession.user?.userType || 'STUDENT',
+      avatarUrl: nextAuthSession.user?.image || null,
     },
     session: {
       id: nextAuthSession.user?.id || '',

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "supabase:create-buckets": "node scripts/create-supabase-buckets.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
@@ -23,6 +24,7 @@
     "@radix-ui/react-tabs": "^1.1.3",
     "@radix-ui/react-toast": "^1.2.14",
     "@radix-ui/react-tooltip": "^1.1.8",
+    "@supabase/supabase-js": "^2.31.0",
     "@tanstack/react-query": "^5.90.2",
     "@tanstack/react-query-devtools": "^5.67.1",
     "@tiptap/extension-placeholder": "^2.11.5",
@@ -33,6 +35,7 @@
     "arctic": "^3.7.0",
     "autoprefixer": "^10.4.21",
     "bcrypt": "^6.0.0",
+    "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.7.0",
     "clsx": "^2.1.1",
@@ -66,6 +69,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/bcrypt": "^6.0.0",
+    "@types/bcryptjs": "^2.4.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

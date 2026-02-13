@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+
+<html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Intelligentsia Student Dashboard</title>
+<title>Intelligentsia | Premium Login</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
@@ -12,345 +14,162 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#FF7211",
-                        "primary-dark": "#E65E00",
-                        "background-light": "#FAFAFA",
-                        "surface-light": "#FFFFFF",
-                        "border-light": "#F1F1F1"
+                        "primary": "#f48c25",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#16110a", // Slightly deeper than the provided dark for better contrast
+                        "card-dark": "#221910",
                     },
                     fontFamily: {
-                        "display": ["Lexend", "sans-serif"]
+                        "display": ["Manrope", "sans-serif"]
                     },
                     borderRadius: {
-                        "DEFAULT": "0.5rem",
-                        "lg": "0.75rem",
-                        "xl": "1rem",
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
                         "full": "9999px"
                     },
                 },
             },
         }
     </script>
-<style type="text/tailwindcss">
+<style>
         body {
-            font-family: 'Lexend', sans-serif;
+            font-family: 'Manrope', sans-serif;
+            overflow: hidden;
         }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        .glass-card {
+            background: rgba(34, 25, 16, 0.7);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(244, 140, 37, 0.1);
         }
-        .intellibar-item {
-            @apply flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 border border-orange-100 rounded-full;
+        .glow-orb {
+            filter: blur(80px);
+            opacity: 0.4;
         }
     </style>
 </head>
-<body class="bg-background-light text-slate-900 antialiased">
-<div class="flex h-screen overflow-hidden">
-<aside class="w-64 flex-shrink-0 flex flex-col bg-white border-r border-slate-200">
-<div class="p-6 flex flex-col h-full justify-between">
-<div class="flex flex-col gap-8">
-<div class="flex items-center gap-3">
-<div class="bg-primary size-10 rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-200">
-<span class="material-symbols-outlined text-2xl">auto_stories</span>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center relative font-display">
+<!-- Decorative Animated-style Background Orbs -->
+<div class="fixed inset-0 overflow-hidden pointer-events-none">
+<div class="glow-orb absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-primary rounded-full"></div>
+<div class="glow-orb absolute bottom-[-10%] right-[-10%] w-[35rem] h-[35rem] bg-primary/30 rounded-full"></div>
+<div class="glow-orb absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50rem] h-[50rem] bg-white/5 rounded-full"></div>
 </div>
-<div class="flex flex-col">
-<h1 class="text-slate-900 text-lg font-bold leading-tight">Intelligentsia</h1>
-<p class="text-slate-400 text-xs font-normal">Student Portal</p>
+<!-- Main Content Wrapper -->
+<main class="relative z-10 w-full max-w-[1200px] px-6 grid grid-cols-1 lg:grid-cols-2 items-center gap-16">
+<!-- Left Side: Brand & Visuals -->
+<div class="hidden lg:flex flex-col space-y-8">
+<div class="flex items-center space-x-3">
+<div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-icons text-white text-3xl">psychology</span>
 </div>
+<span class="text-2xl font-extrabold tracking-tight text-white">Intelligentsia</span>
 </div>
-<nav class="flex flex-col gap-1">
-<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-white shadow-md shadow-orange-100" href="#">
-<span class="material-symbols-outlined">dashboard</span>
-<p class="text-sm font-semibold">Dashboard</p>
-</a>
-<a class="flex items-center gap-3 px-3 py-2.5 text-slate-500 hover:bg-slate-50 hover:text-primary rounded-lg transition-all" href="#">
-<span class="material-symbols-outlined">school</span>
-<p class="text-sm font-medium">My Classroom</p>
-</a>
-<a class="flex items-center gap-3 px-3 py-2.5 text-slate-500 hover:bg-slate-50 hover:text-primary rounded-lg transition-all" href="#">
-<span class="material-symbols-outlined">payments</span>
-<p class="text-sm font-medium">Scholarships</p>
-</a>
-<a class="flex items-center gap-3 px-3 py-2.5 text-slate-500 hover:bg-slate-50 hover:text-primary rounded-lg transition-all" href="#">
-<span class="material-symbols-outlined">work</span>
-<p class="text-sm font-medium">Internships</p>
-</a>
-<a class="flex items-center gap-3 px-3 py-2.5 text-slate-500 hover:bg-slate-50 hover:text-primary rounded-lg transition-all" href="#">
-<span class="material-symbols-outlined">description</span>
-<p class="text-sm font-medium">Resources</p>
-</a>
-</nav>
+<div class="space-y-4">
+<h1 class="text-6xl font-extrabold text-white leading-[1.1]">
+                    The future of <span class="text-primary">intelligence</span> starts here.
+                </h1>
+<p class="text-white/60 text-xl max-w-md leading-relaxed">
+                    Access our world-class neural networks and high-performance computing clusters with a single secure login.
+                </p>
 </div>
-<div class="flex flex-col gap-4">
-<div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Quick Actions</p>
-<div class="flex flex-col gap-2">
-<button class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white py-2 rounded-lg text-sm font-bold transition-all shadow-sm">
-<span class="material-symbols-outlined text-sm">upload</span>
-                            Upload Doc
-                        </button>
-<button class="w-full flex items-center justify-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 rounded-lg text-sm font-bold transition-all">
-<span class="material-symbols-outlined text-sm">group_add</span>
-                            Join Group
-                        </button>
+<div class="flex items-center space-x-6 pt-8">
+<div class="flex -space-x-3">
+<img class="w-10 h-10 rounded-full border-2 border-background-dark object-cover" data-alt="User avatar 1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTXK5uGc2XULC0YMycb4PAym39DqUqWmDxx7gjR4IS7qqxWY0eUWwGmwv6z_zg68skm0J8rBnOM-j5bx8-eYDOyxo8Ezf8RdSiieV88P7SDOzaLgL7s3NyOFOwZGFlmj-KotxFkEOsJAPXt7siYV1tDAsopTdp1C0G41iUA-LWT2IGXRXPL6G0pF7M_EPets1zLsY3InXAptB19-ePCVpj5IE3oq5ANttVEptAmRBaCSoLmNdhqZkkM4_uRIoQ4gWgf-jWZaE4vjM"/>
+<img class="w-10 h-10 rounded-full border-2 border-background-dark object-cover" data-alt="User avatar 2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_-kA9ESzxO9DBd4CTgxAdPpglBxR6bEsxAZNdRKcxXa3rpTyS5efcZAoMdlECOj3D8awnJt0DjjyPupOl1xdRLMu2sNtWreYPgH53IhailPqKzCaQHwhVSNgErxCmYn1nRDc_bKYAMtBNHN4lcbPwmrDwHZ0hvNijN1LVsXqeTYJs5uOcnhakVOVLGoC9SqCgmy1kCtLB03Uvm3x7-LsmCqf1LQ23xwOf9IFIvJa1qfGVCRk37OS_G8YlzQNqdAl8y1yIGwNcVHI"/>
+<img class="w-10 h-10 rounded-full border-2 border-background-dark object-cover" data-alt="User avatar 3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAavgqrGvunSLlO7iVYSLTjGQgzqT6JTRTVyjGYGrLj2pnbfkZzPDoAI-L72m315KEX5B50YxjIeWlJYPdJxnuCPGrzSqsQd_JOXkj6ZY11eF5D3QdAlNzNbscs7EXWOxbrhIQ9765-Orh8XoaV8gmk4ym-YtQPYcP0JIlEK3MymUNEJ7U1avDoraXpGikWzHHqQYZiw2yd33SxO37GN2qr_uNiGB-PskSlYVmRz-HGvU3xxW_kPap1XY-WEix9HKFW0IfPmYtEoiU"/>
+<div class="w-10 h-10 rounded-full border-2 border-background-dark bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">+2k</div>
+</div>
+<p class="text-white/40 text-sm">Joined by over 2,000+ researchers today.</p>
 </div>
 </div>
-<div class="flex flex-col gap-1">
-<a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-slate-600 transition-colors" href="#">
-<span class="material-symbols-outlined">settings</span>
-<p class="text-sm font-medium">Settings</p>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 text-rose-500 hover:text-rose-600 transition-colors" href="#">
-<span class="material-symbols-outlined">logout</span>
-<p class="text-sm font-medium">Logout</p>
-</a>
+<!-- Right Side: Login Card -->
+<div class="w-full max-w-md mx-auto">
+<div class="glass-card p-10 rounded-xl shadow-2xl">
+<!-- Mobile Logo (visible only on small screens) -->
+<div class="lg:hidden flex justify-center mb-8">
+<div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+<span class="material-icons text-white text-3xl">psychology</span>
 </div>
 </div>
+<div class="text-center mb-10">
+<h2 class="text-3xl font-bold text-white mb-2">Welcome Back</h2>
+<p class="text-white/50">Enter your credentials to access your workspace.</p>
 </div>
-</aside>
-<main class="flex-1 flex flex-col overflow-y-auto">
-<header class="sticky top-0 z-10 flex items-center justify-between px-8 py-4 bg-white/90 backdrop-blur-md border-b border-slate-100">
-<div class="flex items-center gap-8">
-<h2 class="text-slate-900 text-xl font-bold tracking-tight">Student Dashboard</h2>
-<div class="relative w-64">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
-<input class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-full text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-slate-700 placeholder:text-slate-400" placeholder="Search resources..." type="text"/>
+<!-- Tabs -->
+<div class="bg-white/5 p-1 rounded-full flex mb-10">
+<button class="flex-1 py-2 px-4 rounded-full bg-primary text-white font-semibold text-sm transition-all duration-300">
+                        Login
+                    </button>
+<button class="flex-1 py-2 px-4 rounded-full text-white/50 hover:text-white font-semibold text-sm transition-all duration-300">
+                        Sign Up
+                    </button>
 </div>
-<div class="hidden xl:flex items-center gap-3 border-l border-slate-200 pl-8">
-<div class="intellibar-item">
-<span class="material-symbols-outlined text-primary text-[18px]">favorite</span>
-<div class="flex flex-col">
-<span class="text-[10px] text-slate-500 font-bold uppercase leading-none">Likes</span>
-<span class="text-xs font-bold text-slate-900 leading-none">1,284</span>
-</div>
-</div>
-<div class="intellibar-item">
-<span class="material-symbols-outlined text-primary text-[18px]">bolt</span>
-<div class="flex flex-col">
-<span class="text-[10px] text-slate-500 font-bold uppercase leading-none">Engage</span>
-<span class="text-xs font-bold text-slate-900 leading-none">84.2%</span>
+<!-- Form -->
+<form action="#" class="space-y-6" method="POST">
+<div>
+<label class="block text-white/70 text-sm font-medium mb-2 px-1">Email Address</label>
+<div class="relative group">
+<span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-primary transition-colors">alternate_email</span>
+<input class="w-full bg-white/5 border border-white/10 rounded-lg py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all duration-300" placeholder="name@company.com" type="email"/>
 </div>
 </div>
-<div class="intellibar-item">
-<span class="material-symbols-outlined text-primary text-[18px]">share</span>
-<div class="flex flex-col">
-<span class="text-[10px] text-slate-500 font-bold uppercase leading-none">Shares</span>
-<span class="text-xs font-bold text-slate-900 leading-none">42</span>
+<div>
+<div class="flex justify-between mb-2 px-1">
+<label class="block text-white/70 text-sm font-medium">Password</label>
+<a class="text-primary text-sm font-medium hover:text-primary/80 transition-colors" href="#">Forgot?</a>
 </div>
-</div>
-</div>
-</div>
-<div class="flex items-center gap-6">
-<div class="flex items-center gap-2">
-<button class="p-2 text-slate-400 hover:text-primary hover:bg-orange-50 rounded-lg relative transition-all">
-<span class="material-symbols-outlined">notifications</span>
-<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-white"></span>
-</button>
-<button class="p-2 text-slate-400 hover:text-primary hover:bg-orange-50 rounded-lg transition-all">
-<span class="material-symbols-outlined">chat_bubble</span>
+<div class="relative group">
+<span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-primary transition-colors">lock</span>
+<input class="w-full bg-white/5 border border-white/10 rounded-lg py-4 pl-12 pr-12 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all duration-300" placeholder="••••••••" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60" type="button">
+<span class="material-icons text-xl">visibility</span>
 </button>
 </div>
-<div class="h-6 w-px bg-slate-200"></div>
-<div class="flex items-center gap-3">
-<div class="text-right hidden sm:block">
-<p class="text-sm font-bold text-slate-900">Alex Rivera</p>
-<p class="text-[10px] font-bold text-slate-400 uppercase">CS Senior</p>
 </div>
-<div class="size-10 rounded-full bg-cover bg-center ring-2 ring-primary ring-offset-2" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAMbLxRlJxo225D5mXd7xnc-pglPK6AjpEuswW7KJNNWRDaQ4xJm-OBKkS0PB0O8KM7Hgjs3OYjDcsyiOr5m76Z3iTb0B8Kvta2HcLRm4coN6bekz8HAn_opYKFYSjhqBivFHHNU9JWN--xutZFdkHMpYBkAIOMAEBTx_52ZdeW7UlpIbCBcJmLqOLcS92glot2Vd3OVmQRVMYyUjAIUGz0SOLUqJMhtcL8NXQxJzc1GSJVRPmy-8NRos93EHTLFz0hLT2dP5xqgHE')"></div>
+<div class="flex items-center space-x-2 px-1">
+<input class="w-5 h-5 rounded border-white/10 bg-white/5 text-primary focus:ring-primary focus:ring-offset-background-dark" id="remember" type="checkbox"/>
+<label class="text-white/50 text-sm" for="remember">Remember me for 30 days</label>
 </div>
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-full shadow-lg shadow-primary/20 transition-all duration-300 transform active:scale-[0.98]" type="submit">
+                        Sign In
+                    </button>
+</form>
+<!-- Divider -->
+<div class="flex items-center my-8">
+<div class="flex-grow h-px bg-white/10"></div>
+<span class="px-4 text-white/30 text-xs font-semibold uppercase tracking-wider">Or continue with</span>
+<div class="flex-grow h-px bg-white/10"></div>
 </div>
-</header>
-<div class="p-8 max-w-[1400px] mx-auto w-full flex flex-col gap-8">
-<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-<div>
-<h1 class="text-slate-900 text-4xl font-black leading-tight tracking-tight">Welcome back, Alex!</h1>
-<p class="text-slate-500 text-lg mt-1 font-medium">Here's what's happening with your studies today.</p>
-</div>
-<button class="flex items-center gap-2 bg-white border border-slate-200 px-5 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm">
-<span class="material-symbols-outlined text-lg">person</span>
-                    View Profile
-                </button>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-<div class="flex flex-col gap-3 rounded-2xl p-6 bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-<div class="flex items-center justify-between">
-<p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Classes Today</p>
-<div class="p-2 bg-orange-50 rounded-lg">
-<span class="material-symbols-outlined text-primary">calendar_today</span>
-</div>
-</div>
-<p class="text-slate-900 text-3xl font-black">4</p>
-<p class="text-xs text-emerald-600 font-bold flex items-center gap-1">
-<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                        Next: Data Structures @ 2:00 PM
-                    </p>
-</div>
-<div class="flex flex-col gap-3 rounded-2xl p-6 bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-<div class="flex items-center justify-between">
-<p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Pending Tasks</p>
-<div class="p-2 bg-amber-50 rounded-lg">
-<span class="material-symbols-outlined text-amber-500">assignment</span>
+<!-- Social Login -->
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center space-x-2 py-3 px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all duration-300 group">
+<svg class="w-5 h-5" viewbox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="white"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="white"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="white"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 12-4.53z" fill="white"></path>
+</svg>
+<span class="text-white text-sm font-medium">Google</span>
+</button>
+<button class="flex items-center justify-center space-x-2 py-3 px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all duration-300 group">
+<svg class="w-5 h-5" fill="white" viewbox="0 0 24 24">
+<path d="M17.05 20.28c-.96.95-2.18 1.78-3.78 1.78-1.42 0-2.43-.88-3.51-.88s-2.09.88-3.51.88c-1.6 0-2.82-.83-3.78-1.78-2.85-2.81-2.85-8.24 0-11.05 1.02-1.01 2.37-1.65 3.84-1.65 1.42 0 2.21.84 3.45.84 1.23 0 2.02-.84 3.45-.84 1.47 0 2.82.64 3.84 1.65 1.42 1.41 1.99 3.54 1.45 5.53-.29 1.1-.9 2.14-1.74 3.12l.01.01zM12.03 7.25c-.02-2.23 1.64-4.07 3.7-4.25.19 2.44-1.92 4.34-3.7 4.25z"></path>
+</svg>
+<span class="text-white text-sm font-medium">Apple</span>
+</button>
 </div>
 </div>
-<p class="text-slate-900 text-3xl font-black">7</p>
-<p class="text-xs text-slate-500 font-medium">3 priority tasks remaining</p>
-</div>
-<div class="flex flex-col gap-3 rounded-2xl p-6 bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-<div class="flex items-center justify-between">
-<p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Upcoming Deadlines</p>
-<div class="p-2 bg-rose-50 rounded-lg">
-<span class="material-symbols-outlined text-rose-500">alarm</span>
-</div>
-</div>
-<p class="text-slate-900 text-3xl font-black">2</p>
-<p class="text-xs text-rose-500 font-bold">Physics Lab report due tonight</p>
-</div>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-<section class="flex flex-col gap-4">
-<div class="flex items-center justify-between">
-<h2 class="text-slate-900 text-xl font-bold">Available Scholarships</h2>
-<button class="text-primary text-sm font-bold hover:text-primary-dark transition-colors">See All</button>
-</div>
-<div class="flex flex-col gap-3">
-<div class="bg-white border border-slate-200 p-4 rounded-2xl flex items-center justify-between hover:border-primary hover:shadow-lg transition-all cursor-pointer group">
-<div class="flex items-center gap-4">
-<div class="size-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-<span class="material-symbols-outlined">monetization_on</span>
-</div>
-<div>
-<h3 class="font-bold text-slate-900 group-hover:text-primary transition-colors">STEM Excellence Grant</h3>
-<p class="text-xs text-slate-400">National Science Foundation</p>
-</div>
-</div>
-<div class="text-right">
-<p class="font-black text-slate-900 text-lg">$5,000</p>
-<p class="text-[10px] text-rose-500 font-bold uppercase tracking-widest">3 Days Left</p>
-</div>
-</div>
-<div class="bg-white border border-slate-200 p-4 rounded-2xl flex items-center justify-between hover:border-primary hover:shadow-lg transition-all cursor-pointer group">
-<div class="flex items-center gap-4">
-<div class="size-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
-<span class="material-symbols-outlined">rocket_launch</span>
-</div>
-<div>
-<h3 class="font-bold text-slate-900 group-hover:text-primary transition-colors">Future Tech Leaders</h3>
-<p class="text-xs text-slate-400">Google Career Initiative</p>
-</div>
-</div>
-<div class="text-right">
-<p class="font-black text-slate-900 text-lg">$2,500</p>
-<p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">12 Days Left</p>
-</div>
-</div>
-</div>
-</section>
-<section class="flex flex-col gap-4">
-<div class="flex items-center justify-between">
-<h2 class="text-slate-900 text-xl font-bold">Latest Internships</h2>
-<button class="text-primary text-sm font-bold hover:text-primary-dark transition-colors">See All</button>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-<div class="bg-white border border-slate-200 p-5 rounded-2xl flex flex-col gap-4 shadow-sm">
-<div class="flex items-start justify-between">
-<div class="size-10 bg-slate-100 rounded-lg bg-cover bg-center shadow-inner" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBDpMOJ70oo3szeMKlhKtldHJsC_SxyOC8owe_1_qST-HU_hH_-nYVdITtrlq8mx0dpY5GegORiEevzXhk-DLYLoGg_XTNY3seOnWpGz5QcB4u3giNnYW39OvZZxTVi2w-Nxpdj0viqKaRUMizaIUcH2K8Q63vr3F9t8PMfj9g79efe-xFoTALiWxaUSA1Jze_ZgriBGZlRFZrUF0rYmJqogNw-2uW1fRm0HGYkQZMp8H4BN-6IsiyysQqEYl13SbZe32eEA1z2Qbk')"></div>
-<span class="bg-orange-50 text-primary text-[10px] font-black px-2.5 py-1 rounded-full uppercase">95% Match</span>
-</div>
-<div>
-<h3 class="font-bold text-slate-900 text-sm">Product Design Intern</h3>
-<p class="text-xs text-slate-400 font-medium">Stripe • Remote</p>
-</div>
-<button class="mt-2 w-full bg-slate-50 hover:bg-primary hover:text-white transition-all text-slate-700 py-2.5 rounded-xl text-xs font-bold shadow-sm">Apply Now</button>
-</div>
-<div class="bg-white border border-slate-200 p-5 rounded-2xl flex flex-col gap-4 shadow-sm">
-<div class="flex items-start justify-between">
-<div class="size-10 bg-slate-100 rounded-lg bg-cover bg-center shadow-inner" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA96zl41cUjpzPgcuOQd9Z7u5buTp_U6OXB1G30EnSGmxJ8NuupqT1iXwC3CEUjyy2jTeowRSh6P4L25m7dZRloxq9Z_vXfLMKbum6D3OuK8r_-tFgCMs5s6biPpZS5mf_JYLumiyfDAMKYbmQAJW6VCkDJIPtKF2G146Rf-Br7F9EbUWApL_KhJlh3VDb0ql5YXJ4Vi8OfUSzv97wnbXINC-94JbO3WE7nAHmexHjN0vk57E87sgjRHBh--S8JLDIXdxgIHEcxg2o')"></div>
-<span class="bg-orange-50 text-primary text-[10px] font-black px-2.5 py-1 rounded-full uppercase">82% Match</span>
-</div>
-<div>
-<h3 class="font-bold text-slate-900 text-sm">Software Engineer</h3>
-<p class="text-xs text-slate-400 font-medium">Vercel • Hybrid</p>
-</div>
-<button class="mt-2 w-full bg-slate-50 hover:bg-primary hover:text-white transition-all text-slate-700 py-2.5 rounded-xl text-xs font-bold shadow-sm">Apply Now</button>
-</div>
-</div>
-</section>
-<section class="flex flex-col gap-4">
-<div class="flex items-center justify-between">
-<h2 class="text-slate-900 text-xl font-bold">Recent Resources</h2>
-<button class="text-primary text-sm font-bold hover:text-primary-dark transition-colors">Explore</button>
-</div>
-<div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-<div class="flex flex-col divide-y divide-slate-100">
-<div class="p-4 flex items-center justify-between hover:bg-orange-50/30 cursor-pointer group transition-colors">
-<div class="flex items-center gap-4">
-<div class="size-10 bg-rose-50 rounded-lg flex items-center justify-center text-rose-500">
-<span class="material-symbols-outlined">picture_as_pdf</span>
-</div>
-<div>
-<p class="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">Algorithms_CheatSheet_V2.pdf</p>
-<p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Prof. Chen • 2h ago</p>
-</div>
-</div>
-<span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">download</span>
-</div>
-<div class="p-4 flex items-center justify-between hover:bg-orange-50/30 cursor-pointer group transition-colors">
-<div class="flex items-center gap-4">
-<div class="size-10 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500">
-<span class="material-symbols-outlined">video_library</span>
-</div>
-<div>
-<p class="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">Intro to Machine Learning Recap</p>
-<p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Lecture Video • 5h ago</p>
-</div>
-</div>
-<span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">play_circle</span>
-</div>
-</div>
-</div>
-</section>
-<section class="flex flex-col gap-4">
-<div class="flex items-center justify-between">
-<h2 class="text-slate-900 text-xl font-bold">My Study Groups</h2>
-<button class="text-primary text-sm font-bold hover:text-primary-dark transition-colors">Manage</button>
-</div>
-<div class="flex flex-col gap-3">
-<div class="bg-white border border-slate-200 p-4 rounded-2xl flex items-center justify-between shadow-sm">
-<div class="flex items-center gap-4">
-<div class="flex -space-x-3 overflow-hidden">
-<img alt="Student" class="inline-block size-10 rounded-full ring-2 ring-white object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBipgrHqtDhWodRpB7BUZZqm4lRsCI9uoQzKubLGMEE7piAAVtjHGIHU_fojBfUe9chfm9wmwYGbcyoByx9eTvOj9LSgJisfR8HgNjK0_KVOjpEOX5GfZ7_AxpEkDq6mwf-GW0dBvv98mLrobTIZG75vS76TUUj0A-is89598TW2rZtpmHSrAbRf0-JS6VUoHc4A8JlGiGwpvnSFIl0ym8dDTrBo_Z3apw0MSvao8Ad3ByANG4yewpbjvE3UCr2iaNLUq0fMOiOGm0"/>
-<img alt="Student" class="inline-block size-10 rounded-full ring-2 ring-white object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDq5ffAB9e_G0wK5x1QZ4VAHFqwkO1aFdss_CghTo68RGtL8A2N_8Qj9sgi8mMmKuyCRPN9yQ3oLIIbXUue7vlMaWgXKqQas20xS4KBsQkzC1EfA7Ln5Lw483-KxbP3mznqehaHCKeNvMACjBxoU8BLqeiE20J6-XZsVqxaZZQNgIdgsnFv1Gn6PCuyYL_m57TSLWEQ8O0nkopSAmntnAuKc9H7xiun_UNUQyudjESrIpjINjRddxp3RpSwiAyq0pnELBQ-AmkagMM"/>
-<img alt="Student" class="inline-block size-10 rounded-full ring-2 ring-white object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbvfjd548aoNoazwZN-PKsdDRzm0Q3o9DIiaIpcBsBC1WUCmDsV7C6OmqOc_OZlRj4fWvooBWF_mTGOM4UcrqiDVFjncP47uKX3aHinoZUZ31ZV0_PnFkzA0RTd3sgNYlA2r2LFrpJQxaFwc2MozTnNzCZbnzjh8LNjNmCt6folZQ8SEbgxcLSJCStIdHd2YG36H9Zn4SZ63jR4hK973AiQBfiYl2e8gtNJCa_DI4B0OcXm2_iCThRvBKixl22NLVnjfwcZVZohFc"/>
-<div class="inline-flex size-10 items-center justify-center rounded-full bg-slate-900 text-[10px] font-bold text-white ring-2 ring-white">+5</div>
-</div>
-<div>
-<h3 class="font-bold text-slate-900 text-sm">Calculus III Midterm Prep</h3>
-<p class="text-[10px] text-emerald-600 font-bold uppercase flex items-center gap-1.5">
-<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                                        4 active now
-                                    </p>
-</div>
-</div>
-<button class="px-5 py-2 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary-dark transition-all shadow-md shadow-orange-100">Enter Room</button>
-</div>
-<div class="bg-white border border-slate-200 p-4 rounded-2xl flex items-center justify-between shadow-sm">
-<div class="flex items-center gap-4">
-<div class="flex -space-x-3 overflow-hidden">
-<img alt="Student" class="inline-block size-10 rounded-full ring-2 ring-white object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3ry34422Guti8maEfga0F-IzNLd7IbyKqbzymxsE9LjiXPjDTpbPVv-WLYhvuBHuQ6rskO_45Ayx0sZP71qHwRFX9SNVPAvOaCAovekU6SZxAG3NuwWVXt5Ebk6rI21XMI5TEp90EQczGp6y2S5d12cmV8N20iYUjs5O1xwhbMOohtbgb41O2ArjRVnTecGYyv_I0R8uh7xH-G0iuOmvAhqIi5S067QciVSYvKpK_cJtyj2cmbLHw2o8sXAqJnE4nGm4ju2Py3a0"/>
-<img alt="Student" class="inline-block size-10 rounded-full ring-2 ring-white object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHavcQy8xNfJrqAsaCS0AntjGfnJWNrXyCTuazbtUM7B9mQnaFNZtgWSvh82lY5sZnf8YM3N5Xfa5Z2WwEFisupjlmWT4tQOjrSLsmKh6qc03RImFg3-WZYVBKuj_1efw-RG52jj0QSiiJJcJY2CnoNcpNORvHkfatUlTOEP10MWxQOBsCnVtRnKfOi3f5L-zZ9P3okHVLxxRjFw-bmhRolMnyo5u-37jlpaX75wsYzfxQlcSm8QXNJC489vbTjWT_t5rLTafknoM"/>
-<div class="inline-flex size-10 items-center justify-center rounded-full bg-slate-900 text-[10px] font-bold text-white ring-2 ring-white">+12</div>
-</div>
-<div>
-<h3 class="font-bold text-slate-900 text-sm">Modern Art History Club</h3>
-<p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Friday @ 4:00 PM</p>
-</div>
-</div>
-<button class="px-5 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl hover:bg-slate-200 transition-all">Enter Room</button>
-</div>
-</div>
-</section>
+<!-- Footer Links -->
+<div class="mt-8 flex justify-center space-x-4">
+<a class="text-white/30 text-xs hover:text-white transition-colors" href="#">Privacy Policy</a>
+<span class="text-white/10">•</span>
+<a class="text-white/30 text-xs hover:text-white transition-colors" href="#">Terms of Service</a>
+<span class="text-white/10">•</span>
+<a class="text-white/30 text-xs hover:text-white transition-colors" href="#">Contact Support</a>
 </div>
 </div>
 </main>
-</div>
-
+<!-- Background Decoration: Subtle Grid -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03]" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 40px 40px;"></div>
 </body></html>

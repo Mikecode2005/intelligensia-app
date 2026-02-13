@@ -10,11 +10,13 @@ import { useToast } from "./ui/use-toast";
 interface FollowButtonProps {
   userId: string;
   initialState: FollowerInfo;
+  className?: string;
 }
 
 export default function FollowButton({
   userId,
   initialState,
+  className,
 }: FollowButtonProps) {
   const { toast } = useToast();
 
@@ -57,6 +59,7 @@ export default function FollowButton({
     <Button
       variant={data.isFollowedByUser ? "secondary" : "default"}
       onClick={() => mutate()}
+      className={className}
     >
       {data.isFollowedByUser ? "Unfollow" : "Follow"}
     </Button>

@@ -61,7 +61,7 @@ export default function Post({ post }: PostProps) {
             </UserTooltip>
             
             {isOwnPost && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+              <span className="inline-flex items-center gap-1 rounded-full bg-ui2-primary/10 px-2 py-1 text-xs font-medium text-ui2-primary dark:bg-ui2-primary/20 dark:text-ui2-primary">
                 <User className="size-3" />
                 You
               </span>
@@ -91,7 +91,7 @@ export default function Post({ post }: PostProps) {
 
       {/* Remix origin indicator */}
       {post.isRemix && post.originalPost && (
-        <div className="flex items-center gap-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 p-3 text-sm text-blue-700 dark:text-blue-300">
+        <div className="flex items-center gap-2 rounded-lg bg-ui2-primary/10 dark:bg-ui2-primary/20 p-3 text-sm text-ui2-primary">
           <Repeat2 className="size-4" />
           <span>
             Remixed from{" "}
@@ -124,11 +124,8 @@ export default function Post({ post }: PostProps) {
             }}
           />
           <button 
-            onClick={() => {
-              console.log("💬 Opening comments for post:", post.id);
-              setShowComments(!showComments);
-            }}
-            className="flex items-center gap-2 transition-colors hover:text-blue-500"
+            onClick={() => setShowComments(!showComments)}
+            className="flex items-center gap-2 transition-colors hover:text-ui2-primary"
           >
             <MessageSquare className="size-5" />
             <span className="text-sm font-medium tabular-nums">

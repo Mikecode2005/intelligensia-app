@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { streamServerClient } from "@/lib/stream"; // Add Stream import
 import { signUpSchema } from "@/lib/validation";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 import { ZodError } from "zod";
 

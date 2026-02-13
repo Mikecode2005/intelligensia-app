@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Settings, Bell, Lock, User, Shield, Eye, EyeOff } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { Settings, Bell, Lock, User, Shield, Eye, EyeOff, Check, AlertCircle } from 'lucide-react';
 
 interface UserSettings {
   isPrivate: boolean;
@@ -22,6 +21,7 @@ interface UserSettings {
 export default function SettingsPage() {
   const { data: session } = useSession();
   const router = useRouter();
+  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [settings, setSettings] = useState<UserSettings>({
     isPrivate: false,
     allowComments: true,
@@ -44,6 +44,11 @@ export default function SettingsPage() {
     fetchSettings();
   }, [session]);
 
+  const showNotification = (type: 'success' | 'error', message: string) => {
+    setNotification({ type, message });
+    setTimeout(() => setNotification(null), 3000);
+  };
+
   const fetchSettings = async () => {
     try {
       const response = await fetch('/api/settings');
@@ -52,7 +57,7 @@ export default function SettingsPage() {
         setSettings(data);
       }
     } catch (error) {
-      toast.error('Failed to load settings');
+      showNotification('error', 'Failed to load settings');
     } finally {
       setLoading(false);
     }
@@ -68,10 +73,10 @@ export default function SettingsPage() {
       });
 
       if (response.ok) {
-        toast.success('Settings saved');
+        showNotification('success', 'Settings saved');
       }
     } catch (error) {
-      toast.error('Failed to save settings');
+      showNotification('error', 'Failed to save settings');
     } finally {
       setSaving(false);
     }
@@ -117,6 +122,27 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100">
+      {/* Notification Toast */}
+      {notification && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className={`fixed top-4 right-4 z-50 p-4 rounded-lg flex items-center gap-2 ${
+            notification.type === 'success'
+              ? 'bg-green-500 text-white'
+              : 'bg-red-500 text-white'
+          }`}
+        >
+          {notification.type === 'success' ? (
+            <Check className="h-5 w-5" />
+          ) : (
+            <AlertCircle className="h-5 w-5" />
+          )}
+          <span>{notification.message}</span>
+        </motion.div>
+      )}
+
       <div className="max-w-4xl mx-auto px-4 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

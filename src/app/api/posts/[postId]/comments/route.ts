@@ -103,7 +103,6 @@ export async function POST(
             content: `commented on your post`,
             recipientId: post.authorId,
             senderId: user.id,
-            postId,
           },
         });
       }

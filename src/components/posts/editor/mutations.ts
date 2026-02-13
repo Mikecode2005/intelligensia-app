@@ -66,51 +66,55 @@ export function useSubmitPostMutation() {
       }
 
       try {
-        // Optimistically add the new post to the feed
-        queryClient.setQueryData<InfiniteData<PostsPage>>(
-          ["post-feed"],
-          (oldData) => {
-            console.log("🔄 Updating cache with new post");
-            
-            if (!oldData) {
-              console.log("📝 No existing cache, creating new structure");
-              return {
-                pages: [{
-                  posts: [newPost],
-                  nextCursor: null
-                }],
-                pageParams: [null]
-              };
-            }
-
-            // Add the new post to the first page
-            const updatedPages = oldData.pages.map((page, index) => {
-              if (index === 0) {
-                console.log(`📝 Adding post to page ${index}`);
+        // Update both for-you and following feeds
+        const feedQueries = [["post-feed", "for-you"], ["post-feed", "following"]];
+        
+        feedQueries.forEach((queryKey) => {
+          queryClient.setQueryData<InfiniteData<PostsPage>>(
+            queryKey,
+            (oldData) => {
+              console.log("🔄 Updating cache with new post for:", queryKey);
+              
+              if (!oldData) {
+                console.log("📝 No existing cache, creating new structure");
                 return {
-                  ...page,
-                  posts: [newPost, ...page.posts]
+                  pages: [{
+                    posts: [newPost],
+                    nextCursor: null
+                  }],
+                  pageParams: [null]
                 };
               }
-              return page;
-            });
 
-            console.log("✅ Cache updated successfully");
-            return {
-              ...oldData,
-              pages: updatedPages
-            };
-          }
-        );
+              // Add the new post to the first page
+              const updatedPages = oldData.pages.map((page, index) => {
+                if (index === 0) {
+                  console.log(`📝 Adding post to page ${index}`);
+                  return {
+                    ...page,
+                    posts: [newPost, ...page.posts]
+                  };
+                }
+                return page;
+              });
 
-        console.log("✅ Cache updated with new post");
+              console.log("✅ Cache updated successfully");
+              return {
+                ...oldData,
+                pages: updatedPages
+              };
+            }
+          );
+        });
+
+        console.log("✅ Cache updated with new post for both feeds");
 
         toast({
           description: "Post created successfully!",
         });
       } catch (error) {
         console.error("❌ Error updating cache in editor:", error);
-        // Fallback: invalidate and refetch
+        // Fallback: invalidate and refetch both feeds
         await queryClient.invalidateQueries({ 
           queryKey: ["post-feed"] 
         });

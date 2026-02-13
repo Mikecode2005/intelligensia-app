@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Intelligentsia - Premium Intel Feed</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#FF6B00",
+                        "primary-hover": "#E66000",
+                        "background-dark": "#050505",
+                        "card-dark": "#121212",
+                        "border-dark": "#262626",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend"]
+                    },
+                    borderRadius: { "DEFAULT": "0.375rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            .material-symbols-outlined {
+                font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            }
+            body {
+                font-family: 'Lexend', sans-serif;
+            }
+            ::-webkit-scrollbar {
+                width: 6px;
+            }
+            ::-webkit-scrollbar-track {
+                background: #050505;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: #262626;
+                border-radius: 10px;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: #FF6B00;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-white font-display">
+<header class="sticky top-0 z-50 w-full bg-background-dark/80 backdrop-blur-md border-b border-border-dark px-4 md:px-10 py-3 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-white">
+<div class="size-9 bg-primary rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(255,107,0,0.3)]">
+<span class="material-symbols-outlined text-black font-bold">school</span>
+</div>
+<h2 class="text-xl font-bold leading-tight tracking-tight hidden sm:block">Intelligentsia</h2>
+</div>
+<div class="relative w-64 md:w-96">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-neutral-500 text-xl">search</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2 border border-border-dark bg-card-dark text-white placeholder-neutral-500 focus:ring-1 focus:ring-primary focus:border-primary rounded-lg text-sm transition-all" placeholder="Search resources, papers, or peers..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4 lg:gap-8">
+<div class="hidden md:flex items-center gap-6">
+<a class="text-white text-sm font-medium hover:text-primary transition-colors" href="#">Explore</a>
+<a class="text-neutral-400 text-sm font-medium hover:text-white transition-colors" href="#">Collaborate</a>
+</div>
+<button class="flex min-w-[110px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-black text-sm font-bold hover:bg-primary-hover transition-all shadow-lg shadow-primary/10">
+<span class="truncate">New Post</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-primary/20 cursor-pointer hover:ring-primary/50 transition-all" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDXJqaPgcqK0chkCzxvDiGc5Cb1N-mYQbODviCP9y1SYHMjaaX5x_bMTNb3PV87LQZtUUIiHBf_rYf0ON1QY2Pw-QWp60AVMnrfZ83I7EuMZqGktbLov1sadQTDbEcGZcMeEbVFahIEZombQW7lNbgDulyQbQZE7nqIblcCmp_Oj1wUge_Fe1CjdZ1rU1n9LLSqX1UX5NhALxWuTVI6uKvHtedsZ-91x2OMeyo22kjubZ1rRezp2BVCIvNgtIXpkcmySKq4Q1yvmNw");'>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-[260px_1fr] lg:grid-cols-[260px_1fr_320px] gap-6 px-4 md:px-10 py-6">
+<aside class="hidden md:flex flex-col gap-8 sticky top-24 self-start h-[calc(100vh-120px)]">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary text-black cursor-pointer group shadow-lg shadow-primary/5">
+<span class="material-symbols-outlined">rss_feed</span>
+<p class="text-sm font-bold">Feed</p>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:bg-card-dark hover:text-primary cursor-pointer transition-all">
+<span class="material-symbols-outlined">library_books</span>
+<p class="text-sm font-medium">Library</p>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:bg-card-dark hover:text-primary cursor-pointer transition-all">
+<span class="material-symbols-outlined">group</span>
+<p class="text-sm font-medium">Groups</p>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:bg-card-dark hover:text-primary cursor-pointer transition-all">
+<span class="material-symbols-outlined">notifications</span>
+<p class="text-sm font-medium">Notifications</p>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:bg-card-dark hover:text-primary cursor-pointer transition-all">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-sm font-medium">Settings</p>
+</div>
+</div>
+<div class="mt-auto p-5 bg-card-dark rounded-xl border border-border-dark">
+<div class="flex gap-3 mb-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-10 border border-border-dark" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDi18PIbA5qyLxYbmJHU9JhaMvMv9qQ5txYtilOwmTBOvzr3Vf8rl1PgzjengoTTySyUSSdbq0x22gpy5TxUADKK4v6m-65odvMhWjjc6YXlGc_pr0UA0Zg7Qt_y3vhjxukPqhEv4cU5jK3kYFHrxpAxgIFdXfjrUYwMaGu9Ey1XcwEZGCLGd77vkpdhs5Ucl_xhGkW7qJoUu317LgUVPDm98P5UzEm_FYf9IPzhPZNc339SsIGGvHfURKNFk4r_Ax5sJdlr6bSI1E");'></div>
+<div class="flex flex-col overflow-hidden">
+<h1 class="text-white text-sm font-bold truncate">Alex Researcher</h1>
+<p class="text-neutral-500 text-xs truncate">PhD Candidate</p>
+</div>
+</div>
+<button class="w-full flex items-center justify-center rounded-lg h-9 px-4 bg-primary/10 text-primary text-xs font-bold hover:bg-primary/20 transition-all border border-primary/20">
+                Create Resource
+            </button>
+</div>
+</aside>
+<section class="flex flex-col gap-6">
+<div class="bg-card-dark rounded-xl border border-border-dark p-5">
+<div class="flex gap-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-11 shrink-0 ring-1 ring-border-dark" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBcwjm-yaC2koo6EQ1jpmaHo82YQW_h1GnUvzA_8bwROMYLEzBoTCN025cBHNIjOTE5XfHLBwWrBPh24CcMpzQg-Mdt6MpSUpDBeN-kYpZqYvf13FjyJZF7ncyjg3Cbi4X_WkBB9xQO4YfAqNkTUlfcaRFpbAFZsydQUDeuoJqmPLd7FS6aI6xdf_6JMrXfawMqPMk7zts3zgExCgMTu6UVzJhTPde6RZL9lvZRTEEiwp-a05n1xbU2oAn_M5CLLlgakUbSyyrZpqs");'></div>
+<div class="flex-1 flex flex-col gap-3">
+<textarea class="w-full bg-transparent border-none focus:ring-0 text-white placeholder-neutral-600 resize-none text-base min-h-[70px]" placeholder="Share an insight, question, or research paper..."></textarea>
+<div class="flex items-center justify-between pt-3 border-t border-border-dark">
+<div class="flex items-center gap-1">
+<button class="p-2 text-neutral-500 hover:text-primary hover:bg-white/5 rounded-lg transition-all">
+<span class="material-symbols-outlined text-[22px]">image</span>
+</button>
+<button class="p-2 text-neutral-500 hover:text-primary hover:bg-white/5 rounded-lg transition-all">
+<span class="material-symbols-outlined text-[22px]">attachment</span>
+</button>
+<button class="p-2 text-neutral-500 hover:text-primary hover:bg-white/5 rounded-lg transition-all">
+<span class="material-symbols-outlined text-[22px]">link</span>
+</button>
+<button class="p-2 text-neutral-500 hover:text-primary hover:bg-white/5 rounded-lg transition-all">
+<span class="material-symbols-outlined text-[22px]">tag</span>
+</button>
+</div>
+<button class="bg-primary text-black px-8 py-2 rounded-lg text-sm font-bold hover:bg-primary-hover transition-all">
+                            Post
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<article class="bg-card-dark rounded-xl border border-border-dark overflow-hidden transition-all hover:border-neutral-700">
+<div class="p-5 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="flex gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-10 border border-border-dark" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC6lOD0E2Juwt5btGVXjG2ldCJzseKLYuwxraMihqyjxAuRerWxYlqBain8in_MOxYwl7hbvsF1ycisAC20E7m_WtOV0dNaHninAzJBnj1OK8ZoE6UAqabUOB1SVIfl-ZxYvzE3ycY2RNZhBzRjuRAg3qUAq-teNztoBrg9aBiIEb6nzWSGKqlTJvJhQwrtlbotbWZp_VsrJie_CRNeCZlzoHxJAoIJj6l2Gv-N1nqA6D3_QQFHlsSI-qlPqY5d4Wxznt0YKyUOjuI");'></div>
+<div>
+<h3 class="text-sm font-bold text-white hover:text-primary cursor-pointer transition-colors">Dr. Sarah Chen</h3>
+<p class="text-xs text-neutral-500">Quantum Computing Faculty • 2h ago</p>
+</div>
+</div>
+<button class="text-neutral-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<div class="flex flex-col gap-4">
+<p class="text-[15px] leading-relaxed text-neutral-300">
+                        I've just uploaded my latest lecture notes on <span class="text-primary font-semibold cursor-pointer hover:underline">#QuantumEntanglement</span>. This includes the corrected proofs for the Bell's inequality seminar we had yesterday.
+                    </p>
+<div class="rounded-xl border border-border-dark overflow-hidden bg-black/40 group cursor-pointer transition-all hover:border-primary/30">
+<div class="h-52 bg-center bg-no-repeat bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBjHkUB4-UUpovC8AJ1PNbXk9fsecPlm9rd_CdDH924B-iDM55ELoyYgWLGbLjup1_F7XJzKy72O9mtUmIBrI8VZkXuA5raxkIHsmkkBMa66EIk47pu-TUhmv4xRPgvtlXAYbFS6pKz1ZSnMeuAbhZZd_2gtRP-KpgCO_pWLD66_-OLCNAx4mqKFy8-JTYD_jzGLML1YMc5117uht_x92xn0Hoe9lumzXlD5oQlpXqR96zHK5SnHgARtaSSBc4Wxln-McD2oAUGi0k");'></div>
+<div class="p-4 flex items-center justify-between bg-card-dark">
+<div class="flex items-center gap-4">
+<div class="size-11 bg-primary/10 rounded-lg flex items-center justify-center text-primary border border-primary/20">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<p class="text-sm font-bold text-white">Quantum_Seminar_Notes_V2.pdf</p>
+<p class="text-xs text-neutral-500 uppercase tracking-wider font-medium">2.4 MB • PDF Document</p>
+</div>
+</div>
+<button class="bg-primary/10 text-primary hover:bg-primary hover:text-black px-4 py-2 rounded-lg text-xs font-bold transition-all border border-primary/20">
+                                Save Resource
+                            </button>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-8 border-t border-border-dark pt-3 mt-1">
+<div class="flex items-center gap-2 cursor-pointer group">
+<span class="material-symbols-outlined text-neutral-500 group-hover:text-primary transition-colors">thumb_up</span>
+<span class="text-xs font-bold text-neutral-500 group-hover:text-white">128</span>
+</div>
+<div class="flex items-center gap-2 cursor-pointer group">
+<span class="material-symbols-outlined text-neutral-500 group-hover:text-primary transition-colors">chat_bubble</span>
+<span class="text-xs font-bold text-neutral-500 group-hover:text-white">24</span>
+</div>
+<div class="flex items-center gap-2 cursor-pointer group">
+<span class="material-symbols-outlined text-neutral-500 group-hover:text-primary transition-colors">share</span>
+<span class="text-xs font-bold text-neutral-500 group-hover:text-white">12</span>
+</div>
+</div>
+</div>
+</article>
+<div class="bg-card-dark rounded-xl border border-primary/20 overflow-hidden relative">
+<div class="absolute top-4 right-4 z-10">
+<span class="bg-black/60 text-primary text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest border border-primary/20 backdrop-blur-sm">Sponsored</span>
+</div>
+<div class="flex items-center">
+<button class="absolute left-2 z-10 size-8 bg-black/50 rounded-full flex items-center justify-center text-white hover:text-primary hover:bg-black/80 transition-all">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="flex-1">
+<div class="relative h-64 w-full">
+<div class="absolute inset-0 flex">
+<div class="w-1/2 h-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBjHkUB4-UUpovC8AJ1PNbXk9fsecPlm9rd_CdDH924B-iDM55ELoyYgWLGbLjup1_F7XJzKy72O9mtUmIBrI8VZkXuA5raxkIHsmkkBMa66EIk47pu-TUhmv4xRPgvtlXAYbFS6pKz1ZSnMeuAbhZZd_2gtRP-KpgCO_pWLD66_-OLCNAx4mqKFy8-JTYD_jzGLML1YMc5117uht_x92xn0Hoe9lumzXlD5oQlpXqR96zHK5SnHgARtaSSBc4Wxln-McD2oAUGi0k");'>
+<div class="w-full h-full bg-gradient-to-r from-transparent to-card-dark"></div>
+</div>
+<div class="w-1/2 p-8 flex flex-col justify-center gap-4">
+<h4 class="text-xl font-bold text-white leading-tight">Advanced Research Tools for Teams</h4>
+<p class="text-sm text-neutral-400">Scale your academic throughput with our cloud-integrated lab management system.</p>
+<button class="bg-primary text-black w-fit px-6 py-2 rounded-lg text-sm font-bold hover:bg-primary-hover transition-all mt-2">
+                                    Get Early Access
+                                </button>
+</div>
+</div>
+</div>
+<div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+<div class="size-1.5 rounded-full bg-primary"></div>
+<div class="size-1.5 rounded-full bg-neutral-700 hover:bg-neutral-500 cursor-pointer transition-all"></div>
+<div class="size-1.5 rounded-full bg-neutral-700 hover:bg-neutral-500 cursor-pointer transition-all"></div>
+</div>
+</div>
+<button class="absolute right-2 z-10 size-8 bg-black/50 rounded-full flex items-center justify-center text-white hover:text-primary hover:bg-black/80 transition-all">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<article class="bg-card-dark rounded-xl border border-border-dark overflow-hidden transition-all hover:border-neutral-700">
+<div class="p-5 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="flex gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-10 border border-border-dark" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDTINwtuA9EQRr_Y_SeqBbDh_NvGr-Mf3pT1YZ6SmQ-2dCWZKaOz8vP8jkvwQmZNpFC4EObc0KFiYhHBc32ZRHXKnZJyPhT-dtHjwX6qZpq2vdf3SL9OkB6jV1NoQI_022Pk_OdufD_NnMwUFmtCawq1ZgOHPn8M20X5--Bb0KumTQUmvaPc6wsu6x4QggPPFpxmYlz91U3pGK6ev9hsDCqtZEvtkn9rbSqGXERFzkcVoDnzGVgqeplGSYiPji2tZegYvLATkGIaBw");'></div>
+<div>
+<h3 class="text-sm font-bold text-white hover:text-primary cursor-pointer transition-colors">Marcus Thorne</h3>
+<p class="text-xs text-neutral-500">Biology Society Lead • 5h ago</p>
+</div>
+</div>
+<button class="text-neutral-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<div class="flex flex-col gap-3">
+<p class="text-[15px] leading-relaxed text-neutral-300">
+                        Anyone interested in a study group for the <span class="text-primary font-semibold cursor-pointer hover:underline">#CRISPR</span> Ethics forum? We're meeting in the central library lounge or via Zoom this Friday at 4 PM.
+                    </p>
+</div>
+<div class="flex items-center gap-8 border-t border-border-dark pt-3 mt-1">
+<div class="flex items-center gap-2 cursor-pointer group">
+<span class="material-symbols-outlined text-neutral-500 group-hover:text-primary transition-colors">thumb_up</span>
+<span class="text-xs font-bold text-neutral-500 group-hover:text-white">45</span>
+</div>
+<div class="flex items-center gap-2 cursor-pointer group">
+<span class="material-symbols-outlined text-neutral-500 group-hover:text-primary transition-colors">chat_bubble</span>
+<span class="text-xs font-bold text-neutral-500 group-hover:text-white">8</span>
+</div>
+<div class="flex items-center gap-2 cursor-pointer group">
+<span class="material-symbols-outlined text-neutral-500 group-hover:text-primary transition-colors">share</span>
+<span class="text-xs font-bold text-neutral-500 group-hover:text-white">2</span>
+</div>
+</div>
+</div>
+</article>
+</section>
+<aside class="hidden lg:flex flex-col gap-6 sticky top-24 self-start">
+<div class="bg-card-dark rounded-xl border border-border-dark p-5">
+<h3 class="text-sm font-bold text-white mb-5 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">trending_up</span>
+                Trending Resources
+            </h3>
+<div class="flex flex-col gap-5">
+<div class="flex items-start gap-4 group cursor-pointer">
+<div class="text-xs font-bold text-neutral-600 group-hover:text-primary transition-colors w-4 pt-1">01</div>
+<div>
+<p class="text-sm font-semibold text-white group-hover:text-primary transition-colors">Machine Learning Ethics 2024</p>
+<p class="text-[11px] text-neutral-500 mt-0.5 tracking-wide">1.2k saves • <span class="text-neutral-600">#AI #Ethics</span></p>
+</div>
+</div>
+<div class="flex items-start gap-4 group cursor-pointer">
+<div class="text-xs font-bold text-neutral-600 group-hover:text-primary transition-colors w-4 pt-1">02</div>
+<div>
+<p class="text-sm font-semibold text-white group-hover:text-primary transition-colors">Macroeconomics Review Set</p>
+<p class="text-[11px] text-neutral-500 mt-0.5 tracking-wide">850 saves • <span class="text-neutral-600">#Finance</span></p>
+</div>
+</div>
+<div class="flex items-start gap-4 group cursor-pointer">
+<div class="text-xs font-bold text-neutral-600 group-hover:text-primary transition-colors w-4 pt-1">03</div>
+<div>
+<p class="text-sm font-semibold text-white group-hover:text-primary transition-colors">Organic Chemistry Synthesis</p>
+<p class="text-[11px] text-neutral-500 mt-0.5 tracking-wide">620 saves • <span class="text-neutral-600">#Chemistry</span></p>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-2 border border-border-dark rounded-lg text-xs font-bold text-primary hover:bg-primary/5 transition-all">View all trends</button>
+</div>
+<div class="bg-card-dark rounded-xl border border-border-dark p-5">
+<h3 class="text-sm font-bold text-white mb-5 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">person_add</span>
+                Suggested Peers
+            </h3>
+<div class="flex flex-col gap-5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 border border-border-dark" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB5W3s0S4Eh4R4Huy4lU4NLSisgVWxtum5w4XGMHenckWSy2QD7K9xdURsVbElwYxGKpR8UnYkgwmZd00dqNIXqO907MX8Pdypr1yFmk9pZuoHd_M3t6asaIDGj4iidwBBX4erKcVfs2J-5Q5mE5aVMqSOSeIIYgHD3jg17J8tVL2YKg_ha4ppNN213Dd65xi4q0Hrj_6hxf4qp0RmyYCCl9KjKkZ6o6SETsPry9FCS_XI4V3OwMl2KO6xK12fUhOI3SfoQSVcL8Zg");'></div>
+<div class="overflow-hidden">
+<p class="text-xs font-bold text-white truncate">Julian Voss</p>
+<p class="text-[10px] text-neutral-500 uppercase tracking-tight">History Dept.</p>
+</div>
+</div>
+<button class="bg-white/5 text-white hover:bg-primary hover:text-black px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all border border-white/10">
+                        Follow
+                    </button>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 border border-border-dark" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC9mK_M6vsp1dPO_vq_8fy51U0RRE7na-6737t_nISQxFehRUuiYpUjKT4SZ1GRCGmyiTLGTVfyut-B341ivJjaUDyxF2oYR4PKb64K-CwCchzz0aTN5PjyIhaPMlEeQkb-5u-IULZhaX3uWPJH6ApOoPzXDxEj05HOXs9fl6ClQMRp2-qSyYqqT5H6mxIDKHgwcOqVpkK78v_TGNFytWK8_E4pEFuxGZr9FTEgcGcb4m1i31mQx1QU5gY-Ko5ezGm1M5zUkJ1MBqs");'></div>
+<div class="overflow-hidden">
+<p class="text-xs font-bold text-white truncate">Elena Rossi</p>
+<p class="text-[10px] text-neutral-500 uppercase tracking-tight">Neuroscience</p>
+</div>
+</div>
+<button class="bg-white/5 text-white hover:bg-primary hover:text-black px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all border border-white/10">
+                        Follow
+                    </button>
+</div>
+</div>
+</div>
+<footer class="flex flex-wrap gap-x-4 gap-y-2 px-2 opacity-60">
+<a class="text-[10px] text-neutral-500 hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-[10px] text-neutral-500 hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-[10px] text-neutral-500 hover:text-primary transition-colors" href="#">Cookies</a>
+<p class="text-[10px] text-neutral-600">© 2024 Intelligentsia Inc.</p>
+</footer>
+</aside>
+</main>
+
+</body></html>

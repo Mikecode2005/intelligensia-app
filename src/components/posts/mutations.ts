@@ -42,7 +42,7 @@ async function uploadFileDirect(file: File, slug: string, timeoutMs = 30000) {
     console.log(`✅ Upload successful for ${slug}:`, data);
     
     // ⭐⭐ FIXED: Handle the correct response structure ⭐⭐
-    // UploadThing returns the data directly, not nested in an array
+    // Upload endpoint returns the data directly, not nested in an array
     return data;
   } catch (error) {
     clearTimeout(timeoutId);

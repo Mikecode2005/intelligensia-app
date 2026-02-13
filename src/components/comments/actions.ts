@@ -49,7 +49,6 @@ export async function submitComment(input: {
           content: `commented on your post`,
           recipientId: post.authorId,
           senderId: user.id,
-          postId: input.postId,
         },
       });
     }

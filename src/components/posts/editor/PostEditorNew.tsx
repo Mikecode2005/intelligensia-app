@@ -2,6 +2,7 @@
 "use client";
 
 import { useSession } from "@/app/(main)/SessionProvider";
+import { Card } from "@/components/ui/card";
 import UserAvatar from "@/components/UserAvatar";
 import { useSubmitPostMutation } from "./mutations";
 import { useUploadThing } from "@/lib/uploadthing";
@@ -20,12 +21,7 @@ export interface Attachment {
   uploadId?: string;
 }
 
-interface PostEditorProps {
-  onSuccess?: () => void;
-  isModal?: boolean;
-}
-
-export default function PostEditor({ onSuccess, isModal = false }: PostEditorProps) {
+export default function PostEditor() {
   const { user, isLoading } = useSession();
   const mutation = useSubmitPostMutation();
   const { startUpload, isUploading: uploadThingUploading } = useUploadThing("postAttachment");
@@ -160,9 +156,6 @@ export default function PostEditor({ onSuccess, isModal = false }: PostEditorPro
               URL.revokeObjectURL(att.previewUrl);
             }
           });
-          if (onSuccess) {
-            onSuccess();
-          }
         },
       },
     );
@@ -181,7 +174,7 @@ export default function PostEditor({ onSuccess, isModal = false }: PostEditorPro
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Share an insight, question, or research paper..."
-            className="w-full bg-transparent border-none focus:ring-0 focus:outline-none text-white placeholder-neutral-600 resize-none text-base min-h-[70px]"
+            className="w-full bg-transparent border-none focus:ring-0 text-white placeholder-neutral-600 resize-none text-base min-h-[70px]"
           />
 
           {/* Attachments Preview */}

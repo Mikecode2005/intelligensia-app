@@ -85,14 +85,13 @@ export async function POST(
         },
         update: {},
       }),
-      // FIX: Changed from userId to authorId
-      ...(loggedInUser.id !== post.authorId // Changed this line
+      // Create notification for the post author when liked
+      ...(loggedInUser.id !== post.authorId
         ? [
             prisma.notification.create({
               data: {
-                issuerId: loggedInUser.id,
-                recipientId: post.authorId, // Changed this line
-                postId,
+                senderId: loggedInUser.id,
+                recipientId: post.authorId,
                 type: "LIKE",
               },
             }),
@@ -137,12 +136,11 @@ export async function DELETE(
           postId,
         },
       }),
-      // FIX: Changed from userId to authorId
+      // Delete notification for unlike
       prisma.notification.deleteMany({
         where: {
-          issuerId: loggedInUser.id,
-          recipientId: post.authorId, // Changed this line
-          postId,
+          senderId: loggedInUser.id,
+          recipientId: post.authorId,
           type: "LIKE",
         },
       }),

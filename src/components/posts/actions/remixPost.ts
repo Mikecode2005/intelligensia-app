@@ -55,8 +55,7 @@ export async function remixPost(originalPostId: string, newContent: string, medi
           type: "REMIX",
           content: `remixed your post: "${originalPost.content.substring(0, 50)}${originalPost.content.length > 50 ? '...' : ''}"`,
           recipientId: originalPost.authorId,
-          issuerId: user.id,
-          postId: remixPost.id,
+          senderId: user.id,
         },
       });
       console.log('📧 Notification created for original author');

@@ -4,13 +4,25 @@
 
 @import "stream-chat-react/dist/css/v2/index.css";
 
-/* Orange Futuristic Theme */
+/* Google Fonts - Material Symbols & Lexend */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap');
+
+/* Orange Futuristic Theme + UI2 Dark Theme */
 :root {
-  /* Primary Orange Theme - Changed from green */
-  --primary: 25 95% 53%; /* Vibrant Orange */
+  /* Primary Blue Theme (from ui2.html) */
+  --primary: 24 100% 50%; /* orange */
   --primary-foreground: 0 0% 100%;
-  --primary-light: 25 95% 63%;
-  --primary-dark: 25 95% 43%;
+  --primary-light: 24 100% 60%;
+  --primary-dark: 24 100% 40%;
+  
+  /* UI2 Dark Theme Colors */
+  --background-dark: 222 30% 9%; /* #101622 */
+  --card-dark: 222 20% 13%; /* #1c1f27 */
+  --border-dark: 220 14% 19%; /* #282e39 */
+  --border-light: 220 14% 27%; /* #3b4354 */
+  --text-muted: 220 14% 66%; /* #9da6b9 */
+  --text-secondary: 220 10% 42%; /* #556077 */
   
   /* Background & Surfaces */
   --background: 30 33% 99%;
@@ -55,9 +67,9 @@
 
 /* Dark Mode - Futuristic Dark */
 .dark {
-  --background: 222 84% 5%;
-  --background-secondary: 222 84% 8%;
-  --background-tertiary: 222 84% 12%;
+  --background: 0 0% 0%; /* black */
+  --background-secondary: 0 0% 6%;
+  --background-tertiary: 0 0% 12%;
   --foreground: 0 0% 98%;
   
   /* Glassmorphism Dark */
@@ -70,7 +82,7 @@
   --popover: 222 84% 8%;
   --popover-foreground: 0 0% 98%;
   
-  --primary: 25 95% 63%;
+  --primary: 24 100% 50%; /* orange */
   --primary-foreground: 222 84% 5%;
   
   --secondary: 222 84% 12%;
@@ -235,3 +247,50 @@ body {
 .str-chat__channel-search-bar-button--exit-search {
   display: none;
 }
+
+/* Material Symbols Outlined Font */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* UI2 Dark Theme Scrollbar */
+.ui2-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ui2-scrollbar::-webkit-scrollbar-track {
+  background: #101622;
+}
+
+.ui2-scrollbar::-webkit-scrollbar-thumb {
+  background: #282e39;
+  border-radius: 4px;
+}
+
+.ui2-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #3b4354;
+}
+
+/* UI2 Color Utilities */
+.bg-ui2-dark { background-color: #101622; }
+.bg-ui2-card { background-color: #1c1f27; }
+.bg-ui2-card-hover { background-color: #282e39; }
+.border-ui2 { border-color: #282e39; }
+.border-ui2-light { border-color: #3b4354; }
+.text-ui2-muted { color: #9da6b9; }
+.text-ui2-secondary { color: #556077; }
+.bg-ui2-primary { background-color: #FF6A00; }
+.text-ui2-primary { color: #FF6A00; }
