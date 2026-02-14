@@ -189,7 +189,7 @@ model Post {
 
 model Attachment {
   id        String   @id @default(cuid())
-  url       String
+  url       String   @unique
   type      String // 'image', 'video', 'document', 'pdf', etc.
   postId    String?  
   post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)

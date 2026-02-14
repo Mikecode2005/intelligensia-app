@@ -1,9 +1,8 @@
 "use server";
 
-import { signIn } from "@/auth";
-import { AuthError } from "next-auth";
+import { signIn } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { upsertStreamUser } from "@/lib/stream-utils";
+import { safeUpsertUser } from "@/lib/stream-utils";
 import prisma from "@/lib/prisma";
 
 export async function login(credentials: unknown) {
@@ -31,17 +30,11 @@ export async function login(credentials: unknown) {
       return { error: "User not found" };
     }
 
-    // Upsert user in Stream
-    try {
-      await upsertStreamUser({
-        id: user.id,
-        name: user.name || user.username || user.email || 'User',
-        image: user.image || undefined,
-      });
-    } catch (streamError) {
-      console.error("Stream user creation error:", streamError);
-      // Don't fail login if Stream fails, just log it
-    }
+    // Upsert user in Stream (non-blocking)
+    safeUpsertUser(user.id, {
+      name: user.name || user.username || user.email || 'User',
+      image: user.image || null,
+    });
 
     // Update last login
     await prisma.performance.upsert({
@@ -57,13 +50,20 @@ export async function login(credentials: unknown) {
       }
     });
 
-    redirect("/dashboard");
-    
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return { error: "Invalid credentials" };
+    // Redirect based on user type/role
+    const userType = user.userType;
+    if (userType === "student") {
+      redirect("/roles/student/dashboard");
+    } else if (userType === "lecturer") {
+      redirect("/roles/lecturer/dashboard");
+    } else if (userType === "organization") {
+      redirect("/roles/organization/dashboard");
+    } else {
+      // Default fallback - redirect to onboarding if no userType set
+      redirect("/onboarding");
     }
     
+  } catch (error) {
     if (error instanceof Error && "digest" in error) {
       throw error;
     }

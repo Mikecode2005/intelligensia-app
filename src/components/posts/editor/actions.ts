@@ -33,58 +33,50 @@ export async function submitPost(input: {
 
     console.log("✅ Server Action: Content validated, creating post...");
 
-    // Use transaction for data consistency
-    const result = await prisma.$transaction(async (tx) => {
-      // 1. Create the post
-      const post = await tx.post.create({
-        data: {
-          content: content,
-          authorId: user.id,
-        }
-      });
-
-      console.log("✅ Server Action: Post created:", post.id);
-
-      // 2. Associate media attachments if provided
-      if (input.mediaUrls && input.mediaUrls.length > 0) {
-        console.log("🔄 Server Action: Associating media:", input.mediaUrls);
-        
-        for (const media of input.mediaUrls) {
-          // Upsert to handle if already exists (e.g., from onUploadComplete) or create new
-          const attachment = await tx.attachment.upsert({
-            where: { url: media.url },
-            update: { 
-              postId: post.id 
-            },
-            create: {
-              url: media.url,
-              type: media.type,
-              userId: user.id,
-              postId: post.id
-            }
-          });
-
-          console.log("✅ Server Action: Upserted attachment:", attachment.id);
-        }
+    // Create the post first without transaction to avoid timeout
+    const post = await prisma.post.create({
+      data: {
+        content: content,
+        authorId: user.id,
       }
-
-      // 3. Return complete post with relations
-      const completePost = await tx.post.findUnique({
-        where: { id: post.id },
-        include: getPostDataInclude(user.id),
-      });
-
-      console.log("✅ Server Action: Complete post with relations:", completePost?.id);
-      return completePost;
     });
 
+    console.log("✅ Server Action: Post created:", post.id);
+
+    // Associate media attachments if provided (outside transaction)
+    if (input.mediaUrls && input.mediaUrls.length > 0) {
+      console.log("🔄 Server Action: Associating media:", input.mediaUrls);
+      
+      // Use createMany for better performance instead of individual upserts
+      const attachmentData = input.mediaUrls.map(media => ({
+        url: media.url,
+        type: media.type,
+        userId: user.id,
+        postId: post.id
+      }));
+
+      await prisma.attachment.createMany({
+        data: attachmentData,
+        skipDuplicates: true // Skip if attachment with same URL already exists
+      });
+
+      console.log("✅ Server Action: Attachments created");
+    }
+
+    // Fetch complete post with relations
+    const completePost = await prisma.post.findUnique({
+      where: { id: post.id },
+      include: getPostDataInclude(user.id),
+    });
+
+    console.log("✅ Server Action: Complete post with relations:", completePost?.id);
     console.log("🎉 Server Action: Post creation successful");
     
     // Revalidate the feed
     revalidatePath("/");
     revalidatePath("/feed");
     
-    return result;
+    return completePost;
 
   } catch (error) {
     console.error("❌ Server Action: Error in submitPost:", error);

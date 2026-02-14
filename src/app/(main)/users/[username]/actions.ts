@@ -22,32 +22,39 @@ export async function updateUserProfile(values: UpdateUserProfileValues) {
 
     if (!user) throw new Error("Unauthorized");
 
-    const updatedUser = await prisma.$transaction(async (tx) => {
-      console.log("💾 Starting database update...");
-      
-      const updatedUser = await tx.user.update({
-        where: { id: user.id },
-        data: validatedValues,
-        select: getUserDataSelect(user.id),
-      });
+    // Build the update data - also update 'image' field if avatarUrl is provided
+    const updateData: any = { ...validatedValues };
+    if (validatedValues.avatarUrl) {
+      updateData.image = validatedValues.avatarUrl;
+    }
 
-      console.log("✅ Database update completed");
+    // Update user directly without transaction to avoid timeout issues
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: updateData,
+      select: getUserDataSelect(user.id),
+    });
 
-      // Stream Chat update (truly non-blocking with timeout)
-      updateStreamChatUser(user.id, {
-        name: validatedValues.displayName || updatedUser.displayName,
-        username: validatedValues.username || updatedUser.username,
-        image: validatedValues.avatarUrl || updatedUser.avatarUrl,
-      }).catch(error => {
-        console.warn("⚠️ Stream update failed (non-critical):", error.message);
-        // Don't rethrow - this should not affect the main profile update
-      });
+    console.log("✅ Database update completed");
 
-      return updatedUser;
+    // Return user data with both avatarUrl and image for the mutation to use
+    const userWithImage = {
+      ...updatedUser,
+      image: updatedUser.avatarUrl || updatedUser.image,
+    };
+
+    // Stream Chat update (non-blocking with timeout)
+    updateStreamChatUser(user.id, {
+      name: validatedValues.displayName || updatedUser.displayName,
+      username: validatedValues.username || updatedUser.username,
+      image: validatedValues.avatarUrl || updatedUser.avatarUrl,
+    }).catch(error => {
+      console.warn("⚠️ Stream update failed (non-critical):", error.message);
+      // Don't rethrow - this should not affect the main profile update
     });
 
     console.log("🎉 Profile update completed successfully");
-    return updatedUser;
+    return userWithImage;
     
   } catch (error) {
     console.error("❌ Profile update error:", error);

@@ -3,17 +3,18 @@ import { PostsPage } from "@/lib/types";
 import { UpdateUserProfileValues } from "@/lib/validation";
 import {
   InfiniteData,
-  QueryFilters,
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { updateUserProfile } from "./actions";
 
 export function useUpdateProfileMutation() {
   const { toast } = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { update: updateSession } = useSession();
 
   console.log("🔄 useUpdateProfileMutation hook called");
 
@@ -29,52 +30,57 @@ export function useUpdateProfileMutation() {
 
       let avatarUrl: string | undefined;
 
-      // 1. Upload avatar using direct fetch (bypass UploadThing hook)
-      // In your mutation function - ADD DETAILED DEBUGGING
-// In your mutation function - FIXED VERSION
-if (avatar) {
-  try {
-    console.log("📤 Starting direct avatar upload...");
-    
-    const formData = new FormData();
-    formData.append("files", avatar);
+      // 1. Upload avatar using Supabase
+      if (avatar) {
+        try {
+          console.log("📤 Starting Supabase avatar upload...");
+          
+          const formData = new FormData();
+          formData.append("files", avatar);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-    const response = await fetch(`/api/uploadthing?slug=avatar`, {
-      method: "POST",
-      body: formData,
-      signal: controller.signal,
-    });
+          // Use the Supabase upload API endpoint with 'avatar' slug
+          const response = await fetch(`/api/uploadthing?slug=avatar`, {
+            method: "POST",
+            body: formData,
+            signal: controller.signal,
+          });
 
-    clearTimeout(timeoutId);
+          clearTimeout(timeoutId);
 
-    if (!response.ok) {
-      throw new Error(`Upload failed: ${response.statusText}`);
-    }
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Upload failed: ${response.status} - ${errorText}`);
+          }
 
-    const uploadResult = await response.json();
-    console.log("📤 Direct avatar upload result:", uploadResult);
-    
-    // ⭐⭐ FIXED: Your core.ts returns an object, not an array ⭐⭐
-    if (uploadResult && uploadResult.url) {
-      avatarUrl = uploadResult.url;
-      console.log("✅ Avatar uploaded successfully, URL:", avatarUrl);
-    } else {
-      console.error("❌ No URL found in upload result:", uploadResult);
-      throw new Error("Avatar upload completed but no URL returned");
-    }
-  } catch (error) {
-    console.error("❌ Avatar upload failed:", error);
-    
-    if (error.name === 'AbortError') {
-      throw new Error("Avatar upload timed out after 30 seconds");
-    }
-    
-    throw new Error(`Failed to upload avatar: ${error instanceof Error ? error.message : "Unknown error"}`);
-  }
-}
+          const uploadResults = await response.json();
+          console.log("📤 Supabase avatar upload result:", uploadResults);
+          
+          // The uploadthing route returns an array of results
+          if (uploadResults && Array.isArray(uploadResults) && uploadResults.length > 0) {
+            // Get the first result's URL
+            avatarUrl = uploadResults[0].url;
+            console.log("✅ Avatar uploaded successfully, URL:", avatarUrl);
+          } else if (uploadResults && uploadResults.url) {
+            // Handle case where it returns a single object
+            avatarUrl = uploadResults.url;
+            console.log("✅ Avatar uploaded successfully, URL:", avatarUrl);
+          } else {
+            console.error("❌ No URL found in upload result:", uploadResults);
+            throw new Error("Avatar upload completed but no URL returned");
+          }
+        } catch (error) {
+          console.error("❌ Avatar upload failed:", error);
+          
+          if (error instanceof Error && error.name === 'AbortError') {
+            throw new Error("Avatar upload timed out after 30 seconds");
+          }
+          
+          throw new Error(`Failed to upload avatar: ${error instanceof Error ? error.message : "Unknown error"}`);
+        }
+      }
 
       // 2. Prepare the data for profile update
       const updateData = avatarUrl 
@@ -92,8 +98,19 @@ if (avatar) {
     onMutate: (variables) => {
       console.log("🚀 onMutate called:", variables);
     },
-    onSuccess: (updatedUser) => {
+    onSuccess: async (updatedUser) => {
       console.log("🎉 onSuccess called:", updatedUser);
+      
+      // Update the NextAuth session to reflect new avatar immediately
+      // Use image field which contains the avatar URL
+      const avatarImage = updatedUser.image || updatedUser.avatarUrl;
+      if (avatarImage) {
+        await updateSession({
+          user: {
+            image: avatarImage
+          }
+        });
+      }
       
       // Update the cache for post feed
       queryClient.setQueryData<InfiniteData<PostsPage>>(

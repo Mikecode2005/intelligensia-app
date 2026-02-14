@@ -73,7 +73,7 @@ export default function Navbar() {
       </div>
 
       {/* Center - Intellibar */}
-      <div className="hidden md:block flex-1\">
+      <div className="hidden md:block flex-1">
         <IntellibarNavbar />
       </div>
 
@@ -99,10 +99,10 @@ export default function Navbar() {
         <Link href={`/users/${user?.username || "profile"}`}>
           <div className="relative">
             <UserAvatar
-              avatarUrl={user?.avatarUrl}
-              size={40}
-              className="ring-2 ring-[#FF6B00]/20 cursor-pointer hover:ring-[#FF6B00]/50 transition-all"
-            />
+                   avatarUrl={user.avatarUrl}
+                   size={40}
+                   className="mx-auto size-full max-h-60 max-w-60 rounded-full"
+                 />
           </div>
         </Link>
       </div>

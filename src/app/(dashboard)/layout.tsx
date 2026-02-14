@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
-import { Sidebar } from "@/components/Sidebar";
-import MainNav from "@/components/MainNav";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import DashboardSidebar from "./DashboardSidebar";
+import Navbar from "@/app/(main)/Navbar";
+import SessionProvider from "@/app/(main)/SessionProvider";
 
 export default async function DashboardLayout({
   children,
@@ -17,20 +18,22 @@ export default async function DashboardLayout({
   }
   
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Sidebar */}
-      <Sidebar user={session.user} />
-      
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Navigation */}
-        <MainNav user={session.user} />
+    <SessionProvider session={session}>
+      <div className="min-h-screen bg-black flex flex-col">
+        {/* Navbar - full width at top */}
+        <Navbar />
         
-        {/* Content Area */}
-        <main className="flex-1 overflow-y-auto p-4">
-          {children}
-        </main>
+        {/* Main Content with Sidebar */}
+        <div className="flex flex-1 overflow-hidden relative">
+          {/* Sidebar - fixed below navbar, only visible on desktop or when toggled on mobile */}
+          <DashboardSidebar user={session.user} />
+          
+          {/* Main Content */}
+          <main className="flex-1 overflow-y-auto w-full md:ml-64">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </SessionProvider>
   );
 }

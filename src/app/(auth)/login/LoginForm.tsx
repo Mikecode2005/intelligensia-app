@@ -13,11 +13,13 @@ import { PasswordInput } from "@/components/passwordinpt";
 import LoadingButton from "@/components/LoadingButton";
 import { useAuth } from "@/hooks/useAuth";
 import { useSearchParams } from "next/navigation";
+import { Mail, Lock } from "lucide-react";
+import { login } from "./actions";
 
 export default function LoginForm() {
   const [error, setError] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
-  const { login, loginWithGoogle } = useAuth();
+  const { loginWithGoogle } = useAuth();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
@@ -35,10 +37,15 @@ export default function LoginForm() {
     setIsLoading(true);
     
     try {
-      const result = await login(values.username, values.password, callbackUrl);
+      // Create FormData to pass to server action
+      const formData = new FormData();
+      formData.append("email", values.username);
+      formData.append("password", values.password);
       
-      if (!result.success) {
-        setError(result.error || "Failed to login");
+      const result = await login(formData);
+      
+      if (result?.error) {
+        setError(result.error);
       }
     } catch (err) {
       setError("An unexpected error occurred");
@@ -67,15 +74,15 @@ export default function LoginForm() {
 
         <div>
           <label className="block text-white/70 text-sm font-medium mb-2 px-1">Email Address</label>
-          <div className="relative group">
-            <span className="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-primary transition-colors">alternate_email</span>
+          <div className="relative">
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 z-10" />
             <Controller
               name="username"
               control={form.control}
               render={({ field }) => (
                 <Input
                   placeholder="name@company.com"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all duration-300"
+                  className="w-full bg-black/50 border border-white/10 rounded-lg py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#FF6B00]/40 focus:border-[#FF6B00] transition-all duration-300"
                   autoComplete="username"
                   {...field}
                 />
@@ -92,15 +99,15 @@ export default function LoginForm() {
               Forgot?
             </a>
           </div>
-          <div className="relative group">
-            <span className="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-primary transition-colors">lock</span>
+          <div className="relative">
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 z-10" />
             <Controller
               name="password"
               control={form.control}
               render={({ field }) => (
                 <PasswordInput
                   placeholder="••••••••"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-4 pl-12 pr-12 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all duration-300"
+                  className="w-full bg-black/50 border border-white/10 rounded-lg py-4 pl-12 pr-12 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#FF6B00]/40 focus:border-[#FF6B00] transition-all duration-300"
                   autoComplete="current-password"
                   {...field}
                 />

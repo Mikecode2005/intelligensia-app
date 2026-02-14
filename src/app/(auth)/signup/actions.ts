@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { streamServerClient } from "@/lib/stream"; // Add Stream import
+import { streamServerClient } from "@/lib/stream";
 import { signUpSchema } from "@/lib/validation";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
@@ -18,6 +18,7 @@ export async function signUp(formData: FormData) {
     const email = formData.get("email") as string;
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
+    const accountType = formData.get("accountType") as string;
     
     // Validate input
     const validatedData = signUpSchema.parse({
@@ -57,6 +58,14 @@ export async function signUp(formData: FormData) {
     // Hash password
     const hashedPassword = await bcrypt.hash(validatedData.password, 10);
 
+    // Determine userType based on account type
+    let userType: string = "STUDENT";
+    if (accountType === "lecturer") {
+      userType = "LECTURER";
+    } else if (accountType === "organization") {
+      userType = "ORGANIZATION";
+    }
+
     // Create user with transaction to ensure atomicity
     const user = await prisma.$transaction(async (tx) => {
       // Create user
@@ -67,7 +76,7 @@ export async function signUp(formData: FormData) {
           displayName: validatedData.username,
           email: validatedData.email,
           password: hashedPassword,
-          userType: "STUDENT",
+          userType: userType,
         },
       });
       
@@ -80,10 +89,10 @@ export async function signUp(formData: FormData) {
         }
       });
 
-      return user; // Return user so we can use it outside the transaction
+      return user;
     });
 
-    // ✅ ADDED: Create user in Stream Chat
+    // Create user in Stream Chat
     await createStreamChatUser(user.id, {
       name: user.displayName || user.username,
       username: user.username,
@@ -138,11 +147,9 @@ async function createStreamChatUser(userId: string, userData: {
       name: userData.name,
       username: userData.username,
       email: userData.email,
-      // Add any other relevant user data
     });
     console.log(`✅ Stream Chat: User created successfully for ${userData.username}`);
   } catch (error: any) {
     console.warn('⚠️ Stream Chat: User creation failed during signup:', error.message);
-    // Don't throw - we don't want signup to fail if Stream is down
   }
 }

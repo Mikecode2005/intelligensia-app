@@ -14,8 +14,15 @@ import { signUp } from "./actions";
 import { PasswordInput } from "@/components/passwordinpt";
 import LoadingButton from "@/components/LoadingButton";
 import { useAuth } from "@/hooks/useAuth";
+import { Mail, Lock, User } from "lucide-react";
 
-export default function SignUpForm() {
+type AccountType = "student" | "lecturer";
+
+interface SignUpFormProps {
+  accountType: AccountType;
+}
+
+export default function SignUpForm({ accountType }: SignUpFormProps) {
     const [error, setError] = useState<string>();
     const [isLoading, setIsLoading] = useState(false);
     const { loginWithGoogle } = useAuth();
@@ -38,13 +45,13 @@ export default function SignUpForm() {
       formData.append("email", values.email);
       formData.append("username", values.username);
       formData.append("password", values.password);
+      formData.append("accountType", accountType);
       
       const result = await signUp(formData);
       
       if (result?.error) {
         setError(result.error);
       }
-      // Redirect is handled in the server action
     } catch (err) {
       setError("An unexpected error occurred");
       console.error("Signup error:", err);
@@ -72,8 +79,8 @@ export default function SignUpForm() {
 
         <div>
           <label className="block text-white/70 text-sm font-medium mb-2 px-1">Email Address</label>
-          <div className="relative group">
-            <span className="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-primary transition-colors">alternate_email</span>
+          <div className="relative">
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 z-10" />
             <Controller
               name="email"
               control={form.control}
@@ -81,7 +88,7 @@ export default function SignUpForm() {
                 <Input
                   type="email"
                   placeholder="name@company.com"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all duration-300"
+                  className="w-full bg-black/50 border border-white/10 rounded-lg py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#FF6B00]/40 focus:border-[#FF6B00] transition-all duration-300"
                   {...field}
                 />
               )}
@@ -92,15 +99,15 @@ export default function SignUpForm() {
 
         <div>
           <label className="block text-white/70 text-sm font-medium mb-2 px-1">Username</label>
-          <div className="relative group">
-            <span className="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-primary transition-colors">person</span>
+          <div className="relative">
+            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 z-10" />
             <Controller
               name="username"
               control={form.control}
               render={({ field }) => (
                 <Input
                   placeholder="yourusername"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all duration-300"
+                  className="w-full bg-black/50 border border-white/10 rounded-lg py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#FF6B00]/40 focus:border-[#FF6B00] transition-all duration-300"
                   {...field}
                 />
               )}
@@ -113,15 +120,15 @@ export default function SignUpForm() {
           <div className="flex justify-between mb-2 px-1">
             <FormLabel className="text-white/70 text-sm font-medium">Password</FormLabel>
           </div>
-          <div className="relative group">
-            <span className="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-primary transition-colors">lock</span>
+          <div className="relative">
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 z-10" />
             <Controller
               name="password"
               control={form.control}
               render={({ field }) => (
                 <PasswordInput
                   placeholder="••••••••"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-4 pl-12 pr-12 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all duration-300"
+                  className="w-full bg-black/50 border border-white/10 rounded-lg py-4 pl-12 pr-12 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#FF6B00]/40 focus:border-[#FF6B00] transition-all duration-300"
                   {...field}
                 />
               )}
@@ -183,23 +190,6 @@ export default function SignUpForm() {
             </svg>
             <span className="text-white text-sm font-medium">Apple</span>
           </button>
-        </div>
-
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/10"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-transparent text-white/50">
-              Already have an account?{" "}
-              <a 
-                href="/login" 
-                className="text-primary hover:text-primary/80 font-medium"
-              >
-                Log in
-              </a>
-            </span>
-          </div>
         </div>
       </form>
     </Form>

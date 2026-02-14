@@ -1,10 +1,12 @@
 <!DOCTYPE html>
+
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Intelligentsia - Premium Intel Feed</title>
+<title>Intelligentsia | Scholarship Portal</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
@@ -12,329 +14,364 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#FF6B00",
-                        "primary-hover": "#E66000",
-                        "background-dark": "#050505",
-                        "card-dark": "#121212",
-                        "border-dark": "#262626",
+                        "primary": "#FF8C00",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#000000",
+                        "surface-dark": "#121212",
+                        "accent-orange": "#FF8C00"
                     },
                     fontFamily: {
-                        "display": ["Lexend"]
+                        "display": ["Lexend", "sans-serif"]
                     },
-                    borderRadius: { "DEFAULT": "0.375rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px" },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
                 },
             },
         }
     </script>
-<style type="text/tailwindcss">
-        @layer base {
-            .material-symbols-outlined {
-                font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            }
-            body {
-                font-family: 'Lexend', sans-serif;
-            }
-            ::-webkit-scrollbar {
-                width: 6px;
-            }
-            ::-webkit-scrollbar-track {
-                background: #050505;
-            }
-            ::-webkit-scrollbar-thumb {
-                background: #262626;
-                border-radius: 10px;
-            }
-            ::-webkit-scrollbar-thumb:hover {
-                background: #FF6B00;
-            }
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
     </style>
 </head>
-<body class="bg-background-dark text-white font-display">
-<header class="sticky top-0 z-50 w-full bg-background-dark/80 backdrop-blur-md border-b border-border-dark px-4 md:px-10 py-3 flex items-center justify-between">
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-200 min-h-screen flex flex-col">
+<!-- IntelliBar / Top Navigation -->
+<header class="sticky top-0 z-50 w-full border-b border-white/10 backdrop-blur-md bg-black/80">
+<div class="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
 <div class="flex items-center gap-8">
-<div class="flex items-center gap-3 text-white">
-<div class="size-9 bg-primary rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(255,107,0,0.3)]">
-<span class="material-symbols-outlined text-black font-bold">school</span>
+<div class="flex items-center gap-3">
+<img class="h-8 w-8 rounded" data-alt="Intelligentsia official brand logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUIAArRMDM62NN06JHv-yLfq-qRTv5EUVL5Oi8o4UeB1Sdym7csHth5JtM98Guj684w1x-s0901XYpSIrXZZkv5jlzqkgGtqWqaOVPFUmli8k2fgVvsVpwsyTD6zXjul8xsS9Ei9jlotF9rml1hCzb63AZpBdIBKo2xj3gOY1ULUCSllu_EEOvhCttcJVJbkmPGiufVj2kS2Hev7h7i9uU2sUWkGe1EIEN2MMvBas7o-XP4O5eQGboJ8Fx48YUWnseyG7tyf05QKc"/>
+<span class="text-xl font-bold tracking-tight text-white">Intelligentsia</span>
 </div>
-<h2 class="text-xl font-bold leading-tight tracking-tight hidden sm:block">Intelligentsia</h2>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium text-white hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="#">Find Scholarships</a>
+<a class="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="#">My Applications</a>
+<a class="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="#">Resources</a>
+</nav>
 </div>
-<div class="relative w-64 md:w-96">
-<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-<span class="material-symbols-outlined text-neutral-500 text-xl">search</span>
+<div class="flex items-center gap-4">
+<div class="hidden lg:flex flex-col items-end mr-4">
+<span class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Potential Funding</span>
+<span class="text-lg font-black text-primary leading-none">$142,500</span>
 </div>
-<input class="block w-full pl-10 pr-3 py-2 border border-border-dark bg-card-dark text-white placeholder-neutral-500 focus:ring-1 focus:ring-primary focus:border-primary rounded-lg text-sm transition-all" placeholder="Search resources, papers, or peers..." type="text"/>
+<div class="h-10 w-[1px] bg-white/10 hidden lg:block mr-2"></div>
+<div class="flex items-center gap-3 bg-surface-dark px-4 py-2 rounded-lg border border-white/5">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase text-slate-400 font-bold">Application Status</span>
+<div class="flex items-center gap-2">
+<div class="w-24 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[65%]"></div>
+</div>
+<span class="text-xs font-bold">65%</span>
 </div>
 </div>
-<div class="flex items-center gap-4 lg:gap-8">
-<div class="hidden md:flex items-center gap-6">
-<a class="text-white text-sm font-medium hover:text-primary transition-colors" href="#">Explore</a>
-<a class="text-neutral-400 text-sm font-medium hover:text-white transition-colors" href="#">Collaborate</a>
 </div>
-<button class="flex min-w-[110px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-black text-sm font-bold hover:bg-primary-hover transition-all shadow-lg shadow-primary/10">
-<span class="truncate">New Post</span>
+<button class="relative p-2 text-slate-400 hover:text-white">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-accent-orange rounded-full border-2 border-background-dark"></span>
 </button>
-<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-primary/20 cursor-pointer hover:ring-primary/50 transition-all" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDXJqaPgcqK0chkCzxvDiGc5Cb1N-mYQbODviCP9y1SYHMjaaX5x_bMTNb3PV87LQZtUUIiHBf_rYf0ON1QY2Pw-QWp60AVMnrfZ83I7EuMZqGktbLov1sadQTDbEcGZcMeEbVFahIEZombQW7lNbgDulyQbQZE7nqIblcCmp_Oj1wUge_Fe1CjdZ1rU1n9LLSqX1UX5NhALxWuTVI6uKvHtedsZ-91x2OMeyo22kjubZ1rRezp2BVCIvNgtIXpkcmySKq4Q1yvmNw");'>
+<div class="h-8 w-8 rounded-full border border-primary/50 flex items-center justify-center text-primary font-bold text-xs cursor-pointer overflow-hidden bg-primary/10">
+<img class="w-full h-full object-cover" data-alt="User profile avatar portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8mgn23RHLOVijd6x1vQPOeRtxXPUakffF6lkiiLXG3T4FQHZ4XyHXAt2VKZkqtODrCU1aWRYBfVRTsE68jkMHqxr4cPA-vUPPRBM7DMBotdr7RZTlZka7407EX6TUcVOR4L-BXHlCLqAKystR0gmoafsTcclpv6ZZtLBX4KILSRIvZh_fiqol2ouzomkstFk5qCn9n6jq4v3s09klXjWzvXfgzRb1Yf9jLEKgpktMGbvl5YOVpVPPPFclYtGUWNG8u3ljsa0BkbY"/>
+</div>
 </div>
 </div>
 </header>
-<main class="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-[260px_1fr] lg:grid-cols-[260px_1fr_320px] gap-6 px-4 md:px-10 py-6">
-<aside class="hidden md:flex flex-col gap-8 sticky top-24 self-start h-[calc(100vh-120px)]">
-<div class="flex flex-col gap-1.5">
-<div class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary text-black cursor-pointer group shadow-lg shadow-primary/5">
-<span class="material-symbols-outlined">rss_feed</span>
-<p class="text-sm font-bold">Feed</p>
+<main class="flex-1 max-w-[1440px] mx-auto w-full px-6 py-8 flex flex-col lg:flex-row gap-8">
+<!-- Sidebar Filters -->
+<aside class="w-full lg:w-64 flex-shrink-0 space-y-8">
+<div class="space-y-4">
+<h3 class="text-xs font-bold uppercase tracking-widest text-slate-500">Welcome back,</h3>
+<h2 class="text-2xl font-black text-white">Scholar Alexander</h2>
+<p class="text-sm text-slate-400">You have <span class="text-accent-orange font-bold">3 deadlines</span> approaching this week.</p>
 </div>
-<div class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:bg-card-dark hover:text-primary cursor-pointer transition-all">
-<span class="material-symbols-outlined">library_books</span>
-<p class="text-sm font-medium">Library</p>
-</div>
-<div class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:bg-card-dark hover:text-primary cursor-pointer transition-all">
-<span class="material-symbols-outlined">group</span>
-<p class="text-sm font-medium">Groups</p>
-</div>
-<div class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:bg-card-dark hover:text-primary cursor-pointer transition-all">
-<span class="material-symbols-outlined">notifications</span>
-<p class="text-sm font-medium">Notifications</p>
-</div>
-<div class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:bg-card-dark hover:text-primary cursor-pointer transition-all">
-<span class="material-symbols-outlined">settings</span>
-<p class="text-sm font-medium">Settings</p>
+<div class="p-5 rounded-xl bg-surface-dark border border-white/5 space-y-6">
+<div>
+<label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Search Portal</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">search</span>
+<input class="w-full bg-background-dark border-none rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-1 focus:ring-primary text-white placeholder:text-slate-600" placeholder="Keywords..." type="text"/>
 </div>
 </div>
-<div class="mt-auto p-5 bg-card-dark rounded-xl border border-border-dark">
-<div class="flex gap-3 mb-4">
-<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-10 border border-border-dark" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDi18PIbA5qyLxYbmJHU9JhaMvMv9qQ5txYtilOwmTBOvzr3Vf8rl1PgzjengoTTySyUSSdbq0x22gpy5TxUADKK4v6m-65odvMhWjjc6YXlGc_pr0UA0Zg7Qt_y3vhjxukPqhEv4cU5jK3kYFHrxpAxgIFdXfjrUYwMaGu9Ey1XcwEZGCLGd77vkpdhs5Ucl_xhGkW7qJoUu317LgUVPDm98P5UzEm_FYf9IPzhPZNc339SsIGGvHfURKNFk4r_Ax5sJdlr6bSI1E");'></div>
-<div class="flex flex-col overflow-hidden">
-<h1 class="text-white text-sm font-bold truncate">Alex Researcher</h1>
-<p class="text-neutral-500 text-xs truncate">PhD Candidate</p>
+<div class="space-y-4">
+<h4 class="text-sm font-bold text-white flex items-center justify-between">
+                        Filter by Category
+                        <span class="material-symbols-outlined text-xs">expand_more</span>
+</h4>
+<div class="space-y-2">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="rounded border-slate-700 bg-transparent text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm text-slate-300 group-hover:text-white transition-colors">STEM Excellence</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="rounded border-slate-700 bg-transparent text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm text-slate-300 group-hover:text-white transition-colors">Humanities &amp; Arts</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="rounded border-slate-700 bg-transparent text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm text-slate-300 group-hover:text-white transition-colors">International Grant</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="rounded border-slate-700 bg-transparent text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm text-slate-300 group-hover:text-white transition-colors">Leadership Awards</span>
+</label>
 </div>
 </div>
-<button class="w-full flex items-center justify-center rounded-lg h-9 px-4 bg-primary/10 text-primary text-xs font-bold hover:bg-primary/20 transition-all border border-primary/20">
-                Create Resource
-            </button>
+<div class="pt-4 border-t border-white/5">
+<h4 class="text-sm font-bold text-white mb-4">Award Range</h4>
+<div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+<span>$5k</span>
+<span>$50k+</span>
+</div>
+<input class="w-full accent-primary" type="range"/>
+</div>
+</div>
+<div class="rounded-xl border border-primary/20 p-5">
+<div class="flex items-center gap-3 text-primary mb-3">
+<span class="material-symbols-outlined">verified</span>
+<span class="text-sm font-bold">Priority Support</span>
+</div>
+<p class="text-xs text-slate-300 leading-relaxed mb-4">As an Intelligentsia premium member, you have access to direct application coaching.</p>
+<button class="w-full py-2 bg-primary text-white rounded-lg text-xs font-bold hover:bg-primary/90 transition-all">Contact Mentor</button>
 </div>
 </aside>
-<section class="flex flex-col gap-6">
-<div class="bg-card-dark rounded-xl border border-border-dark p-5">
-<div class="flex gap-4">
-<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-11 shrink-0 ring-1 ring-border-dark" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBcwjm-yaC2koo6EQ1jpmaHo82YQW_h1GnUvzA_8bwROMYLEzBoTCN025cBHNIjOTE5XfHLBwWrBPh24CcMpzQg-Mdt6MpSUpDBeN-kYpZqYvf13FjyJZF7ncyjg3Cbi4X_WkBB9xQO4YfAqNkTUlfcaRFpbAFZsydQUDeuoJqmPLd7FS6aI6xdf_6JMrXfawMqPMk7zts3zgExCgMTu6UVzJhTPde6RZL9lvZRTEEiwp-a05n1xbU2oAn_M5CLLlgakUbSyyrZpqs");'></div>
-<div class="flex-1 flex flex-col gap-3">
-<textarea class="w-full bg-transparent border-none focus:ring-0 text-white placeholder-neutral-600 resize-none text-base min-h-[70px]" placeholder="Share an insight, question, or research paper..."></textarea>
-<div class="flex items-center justify-between pt-3 border-t border-border-dark">
-<div class="flex items-center gap-1">
-<button class="p-2 text-neutral-500 hover:text-primary hover:bg-white/5 rounded-lg transition-all">
-<span class="material-symbols-outlined text-[22px]">image</span>
-</button>
-<button class="p-2 text-neutral-500 hover:text-primary hover:bg-white/5 rounded-lg transition-all">
-<span class="material-symbols-outlined text-[22px]">attachment</span>
-</button>
-<button class="p-2 text-neutral-500 hover:text-primary hover:bg-white/5 rounded-lg transition-all">
-<span class="material-symbols-outlined text-[22px]">link</span>
-</button>
-<button class="p-2 text-neutral-500 hover:text-primary hover:bg-white/5 rounded-lg transition-all">
-<span class="material-symbols-outlined text-[22px]">tag</span>
-</button>
+<!-- Main Content Area -->
+<section class="flex-1 space-y-6">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex gap-2 p-1 bg-surface-dark rounded-lg border border-white/5 w-fit">
+<button class="px-4 py-1.5 rounded bg-primary text-white text-sm font-bold">All Opportunities</button>
+<button class="px-4 py-1.5 rounded text-slate-400 hover:text-white text-sm font-medium">Saved (12)</button>
+<button class="px-4 py-1.5 rounded text-slate-400 hover:text-white text-sm font-medium">Recommended</button>
 </div>
-<button class="bg-primary text-black px-8 py-2 rounded-lg text-sm font-bold hover:bg-primary-hover transition-all">
-                            Post
+<div class="flex items-center gap-2 text-sm text-slate-400">
+<span>Sort by:</span>
+<select class="bg-transparent border-none text-white font-bold py-0 focus:ring-0 cursor-pointer">
+<option>Deadline (Soonest)</option>
+<option>Amount (Highest)</option>
+<option>Newest Added</option>
+</select>
+</div>
+</div>
+<!-- Scholarship Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Card 1 -->
+<div class="group relative flex flex-col bg-surface-dark border border-white/5 rounded-xl p-6 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl">
+<div class="flex justify-between items-start mb-4">
+<div class="h-12 w-12 bg-white rounded-lg p-2 flex items-center justify-center">
+<img class="w-full h-full object-contain" data-alt="Institutional donor logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsJYWsIcQeqgpY_mc99LJxNCI5elEGUVyIlNX6Z5KSQaxprhVD7JbGLGtOQ5_as74RfpY0S7B50pn6BCK46fHcCYP7NyVDPpeM5N72P7g4L2FCouZFJScOuQJCtsi5PjSl013FzrexJonSXoK0KfE7228o6aEBPNEUwbVMi6jr8xI6EZb7K79IQRsuh0Kp1K27Jhl87Nywd8bVRwKhAjK0MS63Kt2q-B8GQDBsk0w0q-MQFV7_U5NHzI-WVH8EXZbJ8vuqh2tdaIo"/>
+</div>
+<div class="flex flex-col items-end">
+<span class="bg-primary/10 text-primary text-[10px] font-black uppercase px-2 py-1 rounded tracking-widest">48 Hours Left</span>
+<span class="text-primary text-2xl font-black mt-2">$25,000</span>
+</div>
+</div>
+<h3 class="text-lg font-bold text-white mb-2 group-hover:text-primary transition-colors">Global Innovators STEM Grant</h3>
+<p class="text-sm text-slate-400 mb-6 line-clamp-2 leading-relaxed">Awarded to undergraduate students demonstrating exceptional prowess in applied robotics or machine learning development.</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] text-slate-300 font-medium">STEM</span>
+<span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] text-slate-300 font-medium">Undergraduate</span>
+<span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] text-slate-300 font-medium">Merit-based</span>
+</div>
+<div class="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+<button class="text-slate-400 hover:text-white flex items-center gap-2 text-sm font-medium transition-colors">
+<span class="material-symbols-outlined text-lg">bookmark</span>
+                            Save
                         </button>
+<button class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg text-sm font-bold transition-transform active:scale-95">Apply Now</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group relative flex flex-col bg-surface-dark border border-white/5 rounded-xl p-6 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl">
+<div class="flex justify-between items-start mb-4">
+<div class="h-12 w-12 bg-white rounded-lg p-2 flex items-center justify-center text-background-dark font-black text-xs text-center leading-none">
+                            INTL<br/>CORP
+                        </div>
+<div class="flex flex-col items-end">
+<span class="bg-slate-800 text-slate-400 text-[10px] font-black uppercase px-2 py-1 rounded tracking-widest">Ends in 12 Days</span>
+<span class="text-primary text-2xl font-black mt-2">$10,000</span>
+</div>
+</div>
+<h3 class="text-lg font-bold text-white mb-2 group-hover:text-primary transition-colors">Leadership in Social Arts Fellowship</h3>
+<p class="text-sm text-slate-400 mb-6 line-clamp-2 leading-relaxed">Dedicated to fostering the next generation of creative directors and community organizers through fully-funded residencies.</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] text-slate-300 font-medium">Humanities</span>
+<span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] text-slate-300 font-medium">International</span>
+<span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] text-slate-300 font-medium">Fellowship</span>
+</div>
+<div class="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+<button class="text-slate-400 hover:text-white flex items-center gap-2 text-sm font-medium transition-colors">
+<span class="material-symbols-outlined text-lg">bookmark</span>
+                            Save
+                        </button>
+<button class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg text-sm font-bold transition-transform active:scale-95">Apply Now</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group relative flex flex-col bg-surface-dark border border-white/5 rounded-xl p-6 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl">
+<div class="flex justify-between items-start mb-4">
+<div class="h-12 w-12 bg-white rounded-lg p-2 flex items-center justify-center">
+<img class="w-full h-full object-contain" data-alt="University crest logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwC9rT_wyscXblwttHXXgphSZ-RT2ukWuvLAqqhWyHXh8uf6AkjPZlyYhAAqrneQUnkrwFdzWlRKiWmKzrInVsX8TR8Pg_VVz3Lb96CUXzXZnDKQmYwn_rOM1OlbEK_xyIDvyYgPu9JM_l7aPv1yqOJoWtMV9jQuOV77Ac8Lz6argnYA8J2c32fPWawUmz0wrRkbgAFOr8soz8-VISO-N8rbonbzh0NeDILx5Jf472DFBGwJ5EoC2LfAdZMnGCzseV5m8ln_6j_I4"/>
+</div>
+<div class="flex flex-col items-end">
+<span class="bg-slate-800 text-slate-400 text-[10px] font-black uppercase px-2 py-1 rounded tracking-widest">Ends in 24 Days</span>
+<span class="text-primary text-2xl font-black mt-2">$50,000</span>
+</div>
+</div>
+<h3 class="text-lg font-bold text-white mb-2 group-hover:text-primary transition-colors">Pioneer Research Endowment</h3>
+<p class="text-sm text-slate-400 mb-6 line-clamp-2 leading-relaxed">Major funding available for Ph.D. candidates focusing on renewable energy infrastructure in developing regions.</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] text-slate-300 font-medium">Research</span>
+<span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] text-slate-300 font-medium">Ph.D. Only</span>
+<span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] text-slate-300 font-medium">Full Ride</span>
+</div>
+<div class="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+<button class="text-slate-400 hover:text-white flex items-center gap-2 text-sm font-medium transition-colors">
+<span class="material-symbols-outlined text-lg">bookmark</span>
+                            Save
+                        </button>
+<button class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg text-sm font-bold transition-transform active:scale-95">Apply Now</button>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="group relative flex flex-col bg-surface-dark border border-white/5 rounded-xl p-6 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl">
+<div class="flex justify-between items-start mb-4">
+<div class="h-12 w-12 bg-white rounded-lg p-2 flex items-center justify-center">
+<span class="material-symbols-outlined text-background-dark text-2xl">public</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="bg-primary/10 text-primary text-[10px] font-black uppercase px-2 py-1 rounded tracking-widest">Ending Today</span>
+<span class="text-primary text-2xl font-black mt-2">$15,000</span>
+</div>
+</div>
+<h3 class="text-lg font-bold text-white mb-2 group-hover:text-primary transition-colors">Global Citizen Academic Prize</h3>
+<p class="text-sm text-slate-400 mb-6 line-clamp-2 leading-relaxed">Awarded to students with a proven track record of cross-border community service and bilingual proficiency.</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] text-slate-300 font-medium">Bilingual</span>
+<span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] text-slate-300 font-medium">General</span>
+<span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] text-slate-300 font-medium">Service</span>
+</div>
+<div class="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+<button class="text-slate-400 hover:text-white flex items-center gap-2 text-sm font-medium transition-colors">
+<span class="material-symbols-outlined text-lg">bookmark</span>
+                            Save
+                        </button>
+<button class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg text-sm font-bold transition-transform active:scale-95">Apply Now</button>
 </div>
 </div>
 </div>
-</div>
-<article class="bg-card-dark rounded-xl border border-border-dark overflow-hidden transition-all hover:border-neutral-700">
-<div class="p-5 flex flex-col gap-4">
-<div class="flex justify-between items-start">
-<div class="flex gap-3">
-<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-10 border border-border-dark" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC6lOD0E2Juwt5btGVXjG2ldCJzseKLYuwxraMihqyjxAuRerWxYlqBain8in_MOxYwl7hbvsF1ycisAC20E7m_WtOV0dNaHninAzJBnj1OK8ZoE6UAqabUOB1SVIfl-ZxYvzE3ycY2RNZhBzRjuRAg3qUAq-teNztoBrg9aBiIEb6nzWSGKqlTJvJhQwrtlbotbWZp_VsrJie_CRNeCZlzoHxJAoIJj6l2Gv-N1nqA6D3_QQFHlsSI-qlPqY5d4Wxznt0YKyUOjuI");'></div>
-<div>
-<h3 class="text-sm font-bold text-white hover:text-primary cursor-pointer transition-colors">Dr. Sarah Chen</h3>
-<p class="text-xs text-neutral-500">Quantum Computing Faculty • 2h ago</p>
-</div>
-</div>
-<button class="text-neutral-500 hover:text-white transition-colors">
-<span class="material-symbols-outlined">more_horiz</span>
-</button>
-</div>
-<div class="flex flex-col gap-4">
-<p class="text-[15px] leading-relaxed text-neutral-300">
-                        I've just uploaded my latest lecture notes on <span class="text-primary font-semibold cursor-pointer hover:underline">#QuantumEntanglement</span>. This includes the corrected proofs for the Bell's inequality seminar we had yesterday.
-                    </p>
-<div class="rounded-xl border border-border-dark overflow-hidden bg-black/40 group cursor-pointer transition-all hover:border-primary/30">
-<div class="h-52 bg-center bg-no-repeat bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBjHkUB4-UUpovC8AJ1PNbXk9fsecPlm9rd_CdDH924B-iDM55ELoyYgWLGbLjup1_F7XJzKy72O9mtUmIBrI8VZkXuA5raxkIHsmkkBMa66EIk47pu-TUhmv4xRPgvtlXAYbFS6pKz1ZSnMeuAbhZZd_2gtRP-KpgCO_pWLD66_-OLCNAx4mqKFy8-JTYD_jzGLML1YMc5117uht_x92xn0Hoe9lumzXlD5oQlpXqR96zHK5SnHgARtaSSBc4Wxln-McD2oAUGi0k");'></div>
-<div class="p-4 flex items-center justify-between bg-card-dark">
-<div class="flex items-center gap-4">
-<div class="size-11 bg-primary/10 rounded-lg flex items-center justify-center text-primary border border-primary/20">
-<span class="material-symbols-outlined">description</span>
-</div>
-<div>
-<p class="text-sm font-bold text-white">Quantum_Seminar_Notes_V2.pdf</p>
-<p class="text-xs text-neutral-500 uppercase tracking-wider font-medium">2.4 MB • PDF Document</p>
-</div>
-</div>
-<button class="bg-primary/10 text-primary hover:bg-primary hover:text-black px-4 py-2 rounded-lg text-xs font-bold transition-all border border-primary/20">
-                                Save Resource
-                            </button>
-</div>
-</div>
-</div>
-<div class="flex items-center gap-8 border-t border-border-dark pt-3 mt-1">
-<div class="flex items-center gap-2 cursor-pointer group">
-<span class="material-symbols-outlined text-neutral-500 group-hover:text-primary transition-colors">thumb_up</span>
-<span class="text-xs font-bold text-neutral-500 group-hover:text-white">128</span>
-</div>
-<div class="flex items-center gap-2 cursor-pointer group">
-<span class="material-symbols-outlined text-neutral-500 group-hover:text-primary transition-colors">chat_bubble</span>
-<span class="text-xs font-bold text-neutral-500 group-hover:text-white">24</span>
-</div>
-<div class="flex items-center gap-2 cursor-pointer group">
-<span class="material-symbols-outlined text-neutral-500 group-hover:text-primary transition-colors">share</span>
-<span class="text-xs font-bold text-neutral-500 group-hover:text-white">12</span>
-</div>
-</div>
-</div>
-</article>
-<div class="bg-card-dark rounded-xl border border-primary/20 overflow-hidden relative">
-<div class="absolute top-4 right-4 z-10">
-<span class="bg-black/60 text-primary text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest border border-primary/20 backdrop-blur-sm">Sponsored</span>
-</div>
-<div class="flex items-center">
-<button class="absolute left-2 z-10 size-8 bg-black/50 rounded-full flex items-center justify-center text-white hover:text-primary hover:bg-black/80 transition-all">
+<!-- Pagination/Footer Area -->
+<div class="flex items-center justify-center py-8 gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 text-slate-400 hover:text-white hover:border-primary">
 <span class="material-symbols-outlined">chevron_left</span>
 </button>
-<div class="flex-1">
-<div class="relative h-64 w-full">
-<div class="absolute inset-0 flex">
-<div class="w-1/2 h-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBjHkUB4-UUpovC8AJ1PNbXk9fsecPlm9rd_CdDH924B-iDM55ELoyYgWLGbLjup1_F7XJzKy72O9mtUmIBrI8VZkXuA5raxkIHsmkkBMa66EIk47pu-TUhmv4xRPgvtlXAYbFS6pKz1ZSnMeuAbhZZd_2gtRP-KpgCO_pWLD66_-OLCNAx4mqKFy8-JTYD_jzGLML1YMc5117uht_x92xn0Hoe9lumzXlD5oQlpXqR96zHK5SnHgARtaSSBc4Wxln-McD2oAUGi0k");'>
-<div class="w-full h-full bg-gradient-to-r from-transparent to-card-dark"></div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 rounded-lg bg-primary text-white font-bold text-sm">1</button>
+<button class="w-10 h-10 rounded-lg text-slate-400 hover:text-white font-bold text-sm">2</button>
+<button class="w-10 h-10 rounded-lg text-slate-400 hover:text-white font-bold text-sm">3</button>
+<span class="text-slate-600">...</span>
+<button class="w-10 h-10 rounded-lg text-slate-400 hover:text-white font-bold text-sm">12</button>
 </div>
-<div class="w-1/2 p-8 flex flex-col justify-center gap-4">
-<h4 class="text-xl font-bold text-white leading-tight">Advanced Research Tools for Teams</h4>
-<p class="text-sm text-neutral-400">Scale your academic throughput with our cloud-integrated lab management system.</p>
-<button class="bg-primary text-black w-fit px-6 py-2 rounded-lg text-sm font-bold hover:bg-primary-hover transition-all mt-2">
-                                    Get Early Access
-                                </button>
-</div>
-</div>
-</div>
-<div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-<div class="size-1.5 rounded-full bg-primary"></div>
-<div class="size-1.5 rounded-full bg-neutral-700 hover:bg-neutral-500 cursor-pointer transition-all"></div>
-<div class="size-1.5 rounded-full bg-neutral-700 hover:bg-neutral-500 cursor-pointer transition-all"></div>
-</div>
-</div>
-<button class="absolute right-2 z-10 size-8 bg-black/50 rounded-full flex items-center justify-center text-white hover:text-primary hover:bg-black/80 transition-all">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 text-slate-400 hover:text-white hover:border-primary">
 <span class="material-symbols-outlined">chevron_right</span>
 </button>
 </div>
-</div>
-<article class="bg-card-dark rounded-xl border border-border-dark overflow-hidden transition-all hover:border-neutral-700">
-<div class="p-5 flex flex-col gap-4">
-<div class="flex justify-between items-start">
-<div class="flex gap-3">
-<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-10 border border-border-dark" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDTINwtuA9EQRr_Y_SeqBbDh_NvGr-Mf3pT1YZ6SmQ-2dCWZKaOz8vP8jkvwQmZNpFC4EObc0KFiYhHBc32ZRHXKnZJyPhT-dtHjwX6qZpq2vdf3SL9OkB6jV1NoQI_022Pk_OdufD_NnMwUFmtCawq1ZgOHPn8M20X5--Bb0KumTQUmvaPc6wsu6x4QggPPFpxmYlz91U3pGK6ev9hsDCqtZEvtkn9rbSqGXERFzkcVoDnzGVgqeplGSYiPji2tZegYvLATkGIaBw");'></div>
-<div>
-<h3 class="text-sm font-bold text-white hover:text-primary cursor-pointer transition-colors">Marcus Thorne</h3>
-<p class="text-xs text-neutral-500">Biology Society Lead • 5h ago</p>
-</div>
-</div>
-<button class="text-neutral-500 hover:text-white transition-colors">
-<span class="material-symbols-outlined">more_horiz</span>
-</button>
-</div>
-<div class="flex flex-col gap-3">
-<p class="text-[15px] leading-relaxed text-neutral-300">
-                        Anyone interested in a study group for the <span class="text-primary font-semibold cursor-pointer hover:underline">#CRISPR</span> Ethics forum? We're meeting in the central library lounge or via Zoom this Friday at 4 PM.
-                    </p>
-</div>
-<div class="flex items-center gap-8 border-t border-border-dark pt-3 mt-1">
-<div class="flex items-center gap-2 cursor-pointer group">
-<span class="material-symbols-outlined text-neutral-500 group-hover:text-primary transition-colors">thumb_up</span>
-<span class="text-xs font-bold text-neutral-500 group-hover:text-white">45</span>
-</div>
-<div class="flex items-center gap-2 cursor-pointer group">
-<span class="material-symbols-outlined text-neutral-500 group-hover:text-primary transition-colors">chat_bubble</span>
-<span class="text-xs font-bold text-neutral-500 group-hover:text-white">8</span>
-</div>
-<div class="flex items-center gap-2 cursor-pointer group">
-<span class="material-symbols-outlined text-neutral-500 group-hover:text-primary transition-colors">share</span>
-<span class="text-xs font-bold text-neutral-500 group-hover:text-white">2</span>
-</div>
-</div>
-</div>
-</article>
 </section>
-<aside class="hidden lg:flex flex-col gap-6 sticky top-24 self-start">
-<div class="bg-card-dark rounded-xl border border-border-dark p-5">
-<h3 class="text-sm font-bold text-white mb-5 flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-xl">trending_up</span>
-                Trending Resources
-            </h3>
-<div class="flex flex-col gap-5">
-<div class="flex items-start gap-4 group cursor-pointer">
-<div class="text-xs font-bold text-neutral-600 group-hover:text-primary transition-colors w-4 pt-1">01</div>
-<div>
-<p class="text-sm font-semibold text-white group-hover:text-primary transition-colors">Machine Learning Ethics 2024</p>
-<p class="text-[11px] text-neutral-500 mt-0.5 tracking-wide">1.2k saves • <span class="text-neutral-600">#AI #Ethics</span></p>
-</div>
-</div>
-<div class="flex items-start gap-4 group cursor-pointer">
-<div class="text-xs font-bold text-neutral-600 group-hover:text-primary transition-colors w-4 pt-1">02</div>
-<div>
-<p class="text-sm font-semibold text-white group-hover:text-primary transition-colors">Macroeconomics Review Set</p>
-<p class="text-[11px] text-neutral-500 mt-0.5 tracking-wide">850 saves • <span class="text-neutral-600">#Finance</span></p>
-</div>
-</div>
-<div class="flex items-start gap-4 group cursor-pointer">
-<div class="text-xs font-bold text-neutral-600 group-hover:text-primary transition-colors w-4 pt-1">03</div>
-<div>
-<p class="text-sm font-semibold text-white group-hover:text-primary transition-colors">Organic Chemistry Synthesis</p>
-<p class="text-[11px] text-neutral-500 mt-0.5 tracking-wide">620 saves • <span class="text-neutral-600">#Chemistry</span></p>
-</div>
-</div>
-</div>
-<button class="w-full mt-6 py-2 border border-border-dark rounded-lg text-xs font-bold text-primary hover:bg-primary/5 transition-all">View all trends</button>
-</div>
-<div class="bg-card-dark rounded-xl border border-border-dark p-5">
-<h3 class="text-sm font-bold text-white mb-5 flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-xl">person_add</span>
-                Suggested Peers
-            </h3>
-<div class="flex flex-col gap-5">
-<div class="flex items-center justify-between">
+<!-- Right Side Stats (Quick View) -->
+<aside class="hidden xl:block w-72 flex-shrink-0 space-y-6">
+<div class="bg-surface-dark border border-white/5 rounded-xl p-5">
+<h4 class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Application History</h4>
+<div class="space-y-4">
 <div class="flex items-center gap-3">
-<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 border border-border-dark" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB5W3s0S4Eh4R4Huy4lU4NLSisgVWxtum5w4XGMHenckWSy2QD7K9xdURsVbElwYxGKpR8UnYkgwmZd00dqNIXqO907MX8Pdypr1yFmk9pZuoHd_M3t6asaIDGj4iidwBBX4erKcVfs2J-5Q5mE5aVMqSOSeIIYgHD3jg17J8tVL2YKg_ha4ppNN213Dd65xi4q0Hrj_6hxf4qp0RmyYCCl9KjKkZ6o6SETsPry9FCS_XI4V3OwMl2KO6xK12fUhOI3SfoQSVcL8Zg");'></div>
-<div class="overflow-hidden">
-<p class="text-xs font-bold text-white truncate">Julian Voss</p>
-<p class="text-[10px] text-neutral-500 uppercase tracking-tight">History Dept.</p>
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<div class="flex-1">
+<p class="text-sm font-bold text-white">Merit Scholarship</p>
+<p class="text-[10px] text-slate-400 uppercase">Awarded • June 2023</p>
 </div>
+<span class="text-sm font-bold text-white">$5k</span>
 </div>
-<button class="bg-white/5 text-white hover:bg-primary hover:text-black px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all border border-white/10">
-                        Follow
-                    </button>
-</div>
-<div class="flex items-center justify-between">
 <div class="flex items-center gap-3">
-<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 border border-border-dark" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC9mK_M6vsp1dPO_vq_8fy51U0RRE7na-6737t_nISQxFehRUuiYpUjKT4SZ1GRCGmyiTLGTVfyut-B341ivJjaUDyxF2oYR4PKb64K-CwCchzz0aTN5PjyIhaPMlEeQkb-5u-IULZhaX3uWPJH6ApOoPzXDxEj05HOXs9fl6ClQMRp2-qSyYqqT5H6mxIDKHgwcOqVpkK78v_TGNFytWK8_E4pEFuxGZr9FTEgcGcb4m1i31mQx1QU5gY-Ko5ezGm1M5zUkJ1MBqs");'></div>
-<div class="overflow-hidden">
-<p class="text-xs font-bold text-white truncate">Elena Rossi</p>
-<p class="text-[10px] text-neutral-500 uppercase tracking-tight">Neuroscience</p>
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<div class="flex-1">
+<p class="text-sm font-bold text-white">STEM Pioneer</p>
+<p class="text-[10px] text-slate-400 uppercase">Under Review • Step 3/4</p>
 </div>
 </div>
-<button class="bg-white/5 text-white hover:bg-primary hover:text-black px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all border border-white/10">
-                        Follow
-                    </button>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-slate-600"></div>
+<div class="flex-1">
+<p class="text-sm font-bold text-white">Arts Grant 2024</p>
+<p class="text-[10px] text-slate-400 uppercase">Draft • Saved</p>
 </div>
 </div>
 </div>
-<footer class="flex flex-wrap gap-x-4 gap-y-2 px-2 opacity-60">
-<a class="text-[10px] text-neutral-500 hover:text-primary transition-colors" href="#">Privacy Policy</a>
-<a class="text-[10px] text-neutral-500 hover:text-primary transition-colors" href="#">Terms of Service</a>
-<a class="text-[10px] text-neutral-500 hover:text-primary transition-colors" href="#">Cookies</a>
-<p class="text-[10px] text-neutral-600">© 2024 Intelligentsia Inc.</p>
-</footer>
+<button class="w-full mt-6 py-2 border border-white/10 rounded-lg text-xs font-bold text-slate-300 hover:bg-white/5 transition-colors">View All Activities</button>
+</div>
+<div class="bg-gradient-to-br to-transparent border border-white/5 rounded-xl p-5">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+<h4 class="text-xs font-bold uppercase tracking-widest text-white">IntelliMatch AI</h4>
+</div>
+<p class="text-xs text-slate-300 leading-relaxed mb-4">Based on your recent profile update, we found 5 new scholarships you qualify for.</p>
+<div class="p-3 bg-background-dark/50 rounded-lg border border-white/5 mb-4">
+<p class="text-[10px] text-slate-400 font-bold mb-1">MOST COMPATIBLE</p>
+<p class="text-xs font-bold text-white">National Dean's List Grant</p>
+<p class="text-sm font-black text-primary">$12,000</p>
+</div>
+<button class="w-full py-2 bg-white text-background-dark rounded-lg text-xs font-black uppercase hover:bg-slate-200 transition-colors">Review Matches</button>
+</div>
 </aside>
 </main>
-
+<footer class="bg-background-dark border-t border-white/5 py-12 mt-12">
+<div class="max-w-[1440px] mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
+<div class="col-span-1 md:col-span-1 space-y-4">
+<div class="flex items-center gap-3">
+<img class="h-6 w-6" data-alt="Small white logo for footer branding" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-uUsMwO8sfx0emu3--U_wBnoP3404TUnT9T8hQUZsdWvnAHNORHwOjMdWYO07MAJcUv0oHYpZDz7AbG48XnI-M9tlq0lushXtVydbSdKqTcK81HIr51HrK0edWHt1LQcxjMf69rm8QxuaSTMC8WU2jgj0tNyVfR89jkjQ75sXoMXtrZanjf2Mlu92ynpEZHjTeShYv7U3OPxnPcZpxGW2QEGchWRgPRzzXLdLxo5FmoslDalVF4u6BxN4TBRvdFs7oprE4bw9Sxk"/>
+<span class="text-lg font-bold text-white">Intelligentsia</span>
+</div>
+<p class="text-xs text-slate-500 leading-relaxed">The premier gateway for high-achievement academic funding and institutional grants. Empowering scholars worldwide since 2012.</p>
+</div>
+<div class="space-y-4">
+<h5 class="text-xs font-bold uppercase tracking-widest text-white">Portal</h5>
+<ul class="space-y-2 text-sm text-slate-500">
+<li><a class="hover:text-primary transition-colors" href="#">Browse Grants</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Eligibility Calculator</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Institutional Partners</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Success Stories</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h5 class="text-xs font-bold uppercase tracking-widest text-white">Support</h5>
+<ul class="space-y-2 text-sm text-slate-500">
+<li><a class="hover:text-primary transition-colors" href="#">Help Center</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Application Coaching</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Document Verification</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h5 class="text-xs font-bold uppercase tracking-widest text-white">Stay Updated</h5>
+<p class="text-xs text-slate-500">New opportunities delivered to your inbox weekly.</p>
+<div class="flex gap-2">
+<input class="flex-1 border border-white/10 rounded-lg text-xs px-3 py-2 text-white focus:ring-1 focus:ring-primary" placeholder="Your email" type="email"/>
+<button class="bg-primary px-3 py-2 rounded-lg text-white font-bold text-xs">Join</button>
+</div>
+</div>
+</div>
+<div class="max-w-[1440px] mx-auto px-6 pt-12 mt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-slate-600 font-bold uppercase tracking-widest">
+<p>© 2024 Intelligentsia Global Education. All Rights Reserved.</p>
+<div class="flex gap-6">
+<a class="hover:text-white" href="#">Terms</a>
+<a class="hover:text-white" href="#">Privacy</a>
+<a class="hover:text-white" href="#">Compliance</a>
+</div>
+</div>
+</footer>
 </body></html>

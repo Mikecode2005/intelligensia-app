@@ -40,9 +40,10 @@ export default function SessionProvider({ children, session }: SessionProviderPr
 
 // Wrapper component that provides the custom session context
 function SessionContextWrapper({ children }: { children: ReactNode }) {
-  const { data: nextAuthSession, status } = useNextAuthSession();
+  const { data: nextAuthSession, status, update } = useNextAuthSession();
   
   // Convert NextAuth session to your expected format
+  // Use image from session which should now have the updated avatarUrl from the JWT callback
   const customSession = nextAuthSession ? {
     user: {
       id: nextAuthSession.user?.id || '',
@@ -50,6 +51,7 @@ function SessionContextWrapper({ children }: { children: ReactNode }) {
       email: nextAuthSession.user?.email || '',
       username: nextAuthSession.user?.username || nextAuthSession.user?.name || '',
       userType: nextAuthSession.user?.userType || 'STUDENT',
+      // Use image which is now updated with avatarUrl from the JWT callback
       avatarUrl: nextAuthSession.user?.image || null,
     },
     session: {

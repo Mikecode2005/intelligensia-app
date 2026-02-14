@@ -20,6 +20,7 @@ const nextConfig = {
       "chat.stream-io-api.com",
       "lh3.googleusercontent.com",
       "avatars.githubusercontent.com",
+      "burtvpwhozqijltlpldr.supabase.co",
     ],
     remotePatterns: [
       {
@@ -40,7 +41,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'placehold.co', // Add this
+        hostname: 'placehold.co',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
       },
     ],
     dangerouslyAllowSVG: true, // Add this to allow SVG images

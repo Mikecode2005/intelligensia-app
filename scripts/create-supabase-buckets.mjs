@@ -23,13 +23,34 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
 
 async function ensureBucket(bucket, isPublic) {
   try {
-    const { data, error } = await supabase.storage.createBucket(bucket, { public: isPublic });
-    if (error) {
-      if (error.message && error.message.toLowerCase().includes("already exists")) {
-        console.log(`ℹ️ ${bucket} already exists`);
+    // First try to create the bucket
+    const { data: createData, error: createError } = await supabase.storage.createBucket(bucket, { 
+      public: isPublic,
+      allowedMimeTypes: ['*'], // Allow all MIME types
+      fileSizeLimit: '10MB' // 10MB limit
+    });
+    
+    if (createError) {
+      if (createError.message && createError.message.toLowerCase().includes("already exists")) {
+        console.log(`ℹ️ ${bucket} already exists, checking/updating configuration...`);
+        
+        // Bucket exists, try to update its settings to allow all file types
+        const { data: updateData, error: updateError } = await supabase.storage
+          .updateBucket(bucket, {
+            public: isPublic,
+            allowedMimeTypes: ['*'],
+            fileSizeLimit: '10MB'
+          });
+        
+        if (updateError) {
+          // Update might fail if the API doesn't support it, but that's OK
+          console.log(`⚠️ Could not update bucket ${bucket} settings:`, updateError.message);
+        } else {
+          console.log(`✅ Updated bucket: ${bucket} settings`);
+        }
         return;
       }
-      throw error;
+      throw createError;
     }
     console.log(`✅ Created bucket: ${bucket} (public=${isPublic})`);
   } catch (e) {
@@ -38,9 +59,27 @@ async function ensureBucket(bucket, isPublic) {
   }
 }
 
+async function deleteBucket(bucket) {
+  try {
+    const { error } = await supabase.storage.deleteBucket(bucket);
+    if (error) {
+      console.log(`⚠️ Could not delete bucket ${bucket}:`, error.message);
+    } else {
+      console.log(`✅ Deleted bucket: ${bucket}`);
+    }
+  } catch (e) {
+    console.error(`❌ Failed to delete bucket ${bucket}:`, e.message || e);
+  }
+}
+
 (async function main() {
   console.log("Connecting to Supabase:", SUPABASE_URL);
 
+  // Delete and recreate buckets with proper settings
+  await deleteBucket("public-uploads");
+  await deleteBucket("private-uploads");
+  
+  // Recreate with correct settings
   await ensureBucket("public-uploads", true);
   await ensureBucket("private-uploads", false);
 

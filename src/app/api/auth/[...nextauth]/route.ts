@@ -88,13 +88,27 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      // If user just signed in, fetch full user data from database
       if (user) {
         token.id = user.id;
         token.username = user.username;
         token.displayName = user.displayName;
         token.userType = user.userType;
+        
+        // Fetch avatarUrl from database on sign in
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id },
+          select: { avatarUrl: true, image: true }
+        });
+        token.avatarUrl = dbUser?.avatarUrl || dbUser?.image || null;
       }
+      
+      // Handle session update when user updates their profile
+      if (trigger === "update" && session?.avatarUrl) {
+        token.avatarUrl = session.avatarUrl;
+      }
+      
       return token;
     },
     async session({ session, token }) {
@@ -103,6 +117,8 @@ export const authOptions = {
         session.user.username = token.username;
         session.user.displayName = token.displayName;
         session.user.userType = token.userType;
+        // Use avatarUrl from token, fallback to image
+        session.user.image = token.avatarUrl || token.picture || null;
       }
       return session;
     },

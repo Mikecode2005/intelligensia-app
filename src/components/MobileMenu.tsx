@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSession } from "@/app/(main)/SessionProvider";
 import UserAvatar from "./UserAvatar";
 import { motion, AnimatePresence } from "framer-motion";
+import DashboardLink from "./DashboardLink";
 
 export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,15 +68,25 @@ export default function MobileMenu() {
                 {/* Menu Items */}
                 <nav className="flex flex-col gap-2 flex-1">
                   {menuItems.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:bg-[#1c1f27] hover:text-[#FF6B00] transition-all"
-                    >
-                      <span className="material-symbols-outlined">{item.icon}</span>
-                      <span className="text-sm font-medium">{item.label}</span>
-                    </Link>
+                    item.label === "Dashboard" ? (
+                      <DashboardLink key={item.href}>
+                        <div className="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:bg-[#1c1f27] hover:text-[#FF6B00] transition-all"
+                          onClick={() => setIsOpen(false)}>
+                          <span className="material-symbols-outlined">{item.icon}</span>
+                          <span className="text-sm font-medium">{item.label}</span>
+                        </div>
+                      </DashboardLink>
+                    ) : (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setIsOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:bg-[#1c1f27] hover:text-[#FF6B00] transition-all"
+                      >
+                        <span className="material-symbols-outlined">{item.icon}</span>
+                        <span className="text-sm font-medium">{item.label}</span>
+                      </Link>
+                    )
                   ))}
                 </nav>
 

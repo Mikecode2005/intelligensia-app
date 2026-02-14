@@ -15,6 +15,7 @@ const supabase = createClient(SUPABASE_URL ?? "", SUPABASE_SERVICE_ROLE_KEY ?? "
 const SLUG_TO_BUCKET: Record<string, { bucket: string; public: boolean }> = {
   postAttachment: { bucket: "public-uploads", public: true },
   attachment: { bucket: "public-uploads", public: true },
+  avatar: { bucket: "public-uploads", public: true },
   privateFile: { bucket: "private-uploads", public: false },
 };
 
@@ -34,14 +35,29 @@ export async function POST(req: Request) {
     const results: any[] = [];
 
     for (const file of files) {
-      const filename = `${userId}/${Date.now()}_${file.name}`;
+      // Generate a unique filename with proper extension
+      const fileExt = file.name.split('.').pop() || 'jpg';
+      const filename = `${userId}/${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
+      
       const arrayBuffer = await file.arrayBuffer();
+      
+      // Map content types to valid Supabase storage content types
+      const contentType = file.type || 'application/octet-stream';
+      
       const { data, error } = await supabase.storage
         .from(mapping.bucket)
-        .upload(filename, Buffer.from(arrayBuffer), { contentType: file.type, upsert: false });
+        .upload(filename, Buffer.from(arrayBuffer), { 
+          contentType: contentType, 
+          upsert: false,
+          cacheControl: '3600'
+        });
 
       if (error) {
         console.error("Supabase upload error:", error);
+        // Return more specific error message
+        if (error.message.includes('Unsupported media type')) {
+          return NextResponse.json({ error: 'File type not supported. Please use JPG, PNG, GIF, or WebP.' }, { status: 400 });
+        }
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
 

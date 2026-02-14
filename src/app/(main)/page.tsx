@@ -2,6 +2,7 @@
 
 import PostEditor from "@/components/posts/editor/PostEditor";
 import FloatingPostButton from "@/components/FloatingPostButton";
+import DashboardLink from "@/components/DashboardLink";
 import TrendsSidebar from "@/components/TrendsSidebar";
 import FollowingFeed from "./FollowingFeed";
 import ForYouFeed from "./ForYouFeed";
@@ -27,12 +28,12 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/dashboard">
+          <DashboardLink>
             <div className="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:bg-[#121212] hover:text-[#FF6B00] cursor-pointer transition-all">
               <span className="material-symbols-outlined">dashboard</span>
               <p className="text-sm font-medium">Dashboard</p>
             </div>
-          </Link>
+          </DashboardLink>
 
           <Link href="/resources">
             <div className="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:bg-[#121212] hover:text-[#FF6B00] cursor-pointer transition-all">
